@@ -1,0 +1,24 @@
+schema_version: 1
+module:
+  id: cn
+  name: China Direct Baseline
+  category: baseline
+  policy_class: direct_preferred
+  status: research
+  owners: [HCloudLab]
+  description: Narrow CN direct baseline. This module deliberately starts with the .cn namespace; broad CN service/IP coverage must come through a reviewed upstream adapter rather than hand-maintained guesses.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [standards_defined, unknown]
+  required_tests: [routing_match]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: cn.domain-suffix.cn
+    match: {type: domain_suffix, value: cn}
+    ownership: standards_defined
+    purpose: service_core
+    provenance: {kind: manual_research, source: standards_baseline, reference: "CN country-code top-level domain", observed_at: "2026-09-16"}
+    evidence: {level: candidate, methods: [manual_review]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Only covers the .cn namespace. It is not a substitute for GeoSite CN or CN IP data.
