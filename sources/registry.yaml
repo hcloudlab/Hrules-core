@@ -10,17 +10,8 @@ sources:
     repository: MetaCubeX/meta-rules-dat
     role: primary_candidate
     license: GPL-3.0
-    outputs:
-      - mihomo-mrs
-      - mihomo-yaml
-      - sing-box-rule-set
-    candidate_categories:
-      - cn
-      - openai
-      - category-ai-!cn
-      - google-gemini
-      - youtube
-      - telegram
+    outputs: [mihomo-mrs, mihomo-yaml, sing-box-rule-set]
+    candidate_categories: [cn, openai, category-ai-!cn, google-gemini, youtube, telegram]
     notes:
       - Prefer service-specific categories over one broad AI category where Hrules needs independent policy control.
       - Upstream issues must be monitored because service rules can lag application traffic changes.
@@ -29,16 +20,7 @@ sources:
     repository: Loyalsoldier/clash-rules
     role: baseline_candidate
     license: GPL-3.0
-    candidate_categories:
-      - direct
-      - proxy
-      - reject
-      - private
-      - google
-      - telegramcidr
-      - lancidr
-      - cncidr
-      - applications
+    candidate_categories: [direct, proxy, reject, private, google, telegramcidr, lancidr, cncidr, applications]
     notes:
       - Useful for broad baseline routing and CN/private/reject layers.
       - Not the preferred sole source for Hrules service-specific AI/financial policy.
@@ -47,17 +29,12 @@ sources:
     repository: blackmatrix7/ios_rule_script
     role: research_candidate
     license: GPL-2.0
-    candidate_categories:
-      - Claude
-      - OpenAI
-      - Gemini
-      - Binance
-      - Coinbase
-      - other-service-specific-rules
+    candidate_categories: [Claude, OpenAI, Gemini, Crypto, service-specific-rules]
     notes:
       - Strong service-level coverage and useful cross-client research reference.
       - Repository README/special statements and source-level provenance require review before reuse or derivation.
       - Prefer research/reference status until reuse policy is explicitly cleared.
+      - Broad Crypto coverage is useful for research but is too broad to become Hrules canonical financial taxonomy unchanged.
 
   acl4ssr:
     repository: ACL4SSR/ACL4SSR
@@ -71,89 +48,84 @@ policy_modules:
   claude:
     target_group: "🔐 Claude / OpenAI [自选]"
     granularity: independent
-    source_priority:
-      - metacubex_meta_rules_dat
-      - blackmatrix7_ios_rule_script
-    validation:
-      - claude_web
-      - claude_auth
-      - claude_assets
-      - claude_app_traffic
+    source_priority: [metacubex_meta_rules_dat, blackmatrix7_ios_rule_script]
+    validation: [claude_web, claude_auth, claude_assets, claude_app_traffic]
 
   openai:
     target_group: "🔐 Claude / OpenAI [自选]"
     granularity: independent
-    source_priority:
-      - metacubex_meta_rules_dat
-      - blackmatrix7_ios_rule_script
-    validation:
-      - chatgpt_web
-      - openai_api
-      - openai_auth
-      - openai_static_assets
+    source_priority: [metacubex_meta_rules_dat, blackmatrix7_ios_rule_script]
+    validation: [chatgpt_web, openai_api, openai_auth, openai_static_assets]
 
   gemini:
     target_group: "🤖 AI 服务 [自选]"
     granularity: independent
-    source_priority:
-      - metacubex_meta_rules_dat
-      - blackmatrix7_ios_rule_script
-    validation:
-      - gemini_web
-      - gemini_app
-      - google_api_dependencies
+    source_priority: [metacubex_meta_rules_dat, blackmatrix7_ios_rule_script]
+    validation: [gemini_web, gemini_app, google_api_dependencies]
     notes:
       - Do not assume a single obvious Gemini domain is sufficient; app traffic can use additional Google API hostnames.
 
   crypto:
     target_group: "💰 虚拟货币 [自选]"
     granularity: service_modules_aggregated_for_v0_1_ui
-    candidate_submodules:
-      - binance
-      - coinbase
-      - kraken
-      - okx
-      - bybit
-    source_priority:
-      - blackmatrix7_ios_rule_script
-      - acl4ssr
+    candidate_submodules: [binance, coinbase, kraken, okx, bybit]
+    source_priority: [blackmatrix7_ios_rule_script, acl4ssr]
+    status: research_reference_only
     notes:
       - Keep exchange modules separate internally even if v0.1 UI exposes one Crypto group.
       - No default country is encoded at the rule-data layer.
+      - Reviewed broad upstream Crypto coverage mixes exchanges, wallets, DeFi, block explorers, analytics and market-data sites.
+      - Hrules should not copy that taxonomy directly because sensitive exchange/account traffic and ordinary information traffic may need different egress policies.
+      - TradingView appears in broad Crypto coverage, reinforcing the need to keep market-data separate from exchange/account traffic.
 
   us_banking:
     target_group: "🏦 美国银行 [自选]"
     granularity: institution_modules_aggregated_for_v0_1_ui
-    candidate_submodules:
-      - chase
-      - bank_of_america
-      - wells_fargo
-      - citi
-      - capital_one
-      - american_express
+    candidate_submodules: [chase, bank_of_america, wells_fargo, citi, capital_one, american_express]
     source_priority: []
-    status: needs_source_research
+    status: requires_hcloudlab_validation
     notes:
-      - Do not build this from guessed domains.
-      - Prefer verified institution-specific domains and captured dependency traffic.
+      - Current research did not identify a mature maintained banking-specific ruleset suitable as a trusted upstream baseline.
+      - Generic GitHub/domain lists containing bank domains are discovery evidence only, not sufficient provenance for Hrules publication.
+      - Do not build this from guessed domains or a generic US-domain list.
+      - Build institution modules from verified first-party domains plus observed login/app dependency traffic, then test routing as a whole session.
+      - Shared third-party infrastructure must not be assigned to the banking group solely because it appears during one capture; ownership and conflict analysis are required.
 
   us_stocks:
     target_group: "📈 美股 [自选]"
     granularity: brokerage_and_market_data_separable
     candidate_submodules:
-      brokerage:
-        - interactive_brokers
-        - schwab
-        - fidelity
-        - robinhood
-        - webull
-      market_data:
-        - tradingview
-        - yahoo_finance
+      brokerage: [interactive_brokers, schwab, fidelity, robinhood, webull]
+      market_data: [tradingview, yahoo_finance]
     source_priority: []
-    status: needs_source_research
+    status: requires_hcloudlab_validation
     notes:
-      - Account/brokerage traffic and general market-data traffic must remain separable internally.
+      - Existing broad proxy/crypto rules contain some brokerage or market-data domains but do not provide a complete brokerage-session ruleset.
+      - Interactive Brokers appears in broad proxy-rule coverage, but this is not enough to treat that source as an authoritative brokerage module.
+      - Robinhood was not found as a dedicated rule in the reviewed blackmatrix7 code search.
+      - Keep brokerage/account traffic separate from market-data/information traffic from the first canonical version.
+      - Build brokerage modules from verified first-party domains plus observed web/app authentication and session dependencies.
+
+financial_validation_method:
+  phase_1_first_party_inventory:
+    - verify_official_root_domains
+    - identify_official_auth_and_api_subdomains
+    - identify_official_static_or_cdn_domains_when_organization_owned
+  phase_2_session_observation:
+    - capture_dns_and_mihomo_connection_logs
+    - perform_login_without_sensitive_credentials_in_shared_artifacts
+    - exercise_account_home_and_normal_navigation
+    - record_candidate_dependencies
+  phase_3_classification:
+    - separate_first_party_from_shared_third_party
+    - check_overlap_with_existing_hrules_modules
+    - reject_analytics_or_shared_identity_domains_unless_routing_dependency_is_proven
+  phase_4_tests:
+    - assert_root_domain_policy
+    - assert_auth_flow_policy
+    - assert_api_policy
+    - assert_no_unintended_direct_or_default_proxy_split_for_required_first_party_traffic
+    - assert_shared_domains_are_not_overclaimed
 
 release_rules:
   - upstream_update_never_publishes_directly
