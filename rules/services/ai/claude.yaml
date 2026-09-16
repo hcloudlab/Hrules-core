@@ -7,7 +7,7 @@ module:
   status: research
   owners:
     - HCloudLab
-  description: Proof fixture for the Hrules canonical schema. Candidate records are not public release rules.
+  description: Research module for Claude first-party service domains.
 
 release_policy:
   minimum_evidence: verified
@@ -27,17 +27,19 @@ rules:
     ownership: first_party
     purpose: service_core
     provenance:
-      kind: first_party
-      source: official_service
-      reference: null
-      observed_at: null
+      kind: hcloudlab_observation
+      source: clash_verge_live_test
+      reference: "Live Clash Verge/Mihomo test matched DomainSuffix(claude.ai) and routed through Claude/OpenAI -> US system group using a real Jiuyun subscription"
+      observed_at: "2026-09-16"
     evidence:
-      level: candidate
+      level: verified
       methods:
         - official_domain
+        - runtime_observation
     validation:
-      state: untested
-      last_tested: null
-      tests: []
+      state: passed
+      last_tested: "2026-09-16"
+      tests:
+        - web_access
     conflicts: []
-    notes: Seed fixture only. Must pass HCloudLab session validation before release.
+    notes: Claude web routing verified. Authentication flow remains a separate release-gate test.
