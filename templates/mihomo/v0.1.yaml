@@ -86,6 +86,30 @@ user_groups:
       - "🇸🇬 新加坡 [系统]"
       - "🌐 全部节点 [系统]"
 
+  - policy: youtube_media
+    name: "📺 YouTube [自选]"
+    type: select
+    candidates:
+      - "♻️ 自动选择 [系统]"
+      - "🇺🇸 美国 [系统]"
+      - "🇯🇵 日本 [系统]"
+      - "🇸🇬 新加坡 [系统]"
+      - "🇭🇰 香港 [系统]"
+      - "🇹🇼 台湾 [系统]"
+      - "🌐 全部节点 [系统]"
+
+  - policy: telegram_communication
+    name: "💬 Telegram [自选]"
+    type: select
+    candidates:
+      - "♻️ 自动选择 [系统]"
+      - "🇺🇸 美国 [系统]"
+      - "🇯🇵 日本 [系统]"
+      - "🇸🇬 新加坡 [系统]"
+      - "🇭🇰 香港 [系统]"
+      - "🇹🇼 台湾 [系统]"
+      - "🌐 全部节点 [系统]"
+
   - policy: crypto_account
     name: "💰 虚拟货币 [自选]"
     type: select
