@@ -1,0 +1,24 @@
+schema_version: 1
+module:
+  id: tradingview
+  name: TradingView
+  category: market_data
+  policy_class: informational
+  status: research
+  owners: [HCloudLab]
+  description: Proof fixture showing market-data traffic remains distinct from brokerage/account-sensitive traffic.
+release_policy:
+  minimum_evidence: corroborated
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: tradingview.domain-suffix.tradingview-com
+    match: {type: domain_suffix, value: tradingview.com}
+    ownership: first_party
+    purpose: market_data
+    provenance: {kind: first_party, source: official_service, reference: null, observed_at: null}
+    evidence: {level: candidate, methods: [official_domain]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Seed fixture. It must not automatically inherit crypto-exchange or brokerage account policy.
