@@ -6,7 +6,7 @@ module:
   policy_class: direct_preferred
   status: research
   owners: [HCloudLab]
-  description: Narrow CN direct baseline. This module deliberately starts with the .cn namespace; broad CN service/IP coverage must come through a reviewed upstream adapter rather than hand-maintained guesses.
+  description: Narrow CN direct baseline. The .cn namespace is only a bootstrap rule; broad mainland service and IP coverage must come through reviewed upstream data rather than hand-maintained guesses.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [standards_defined, unknown]
@@ -17,8 +17,22 @@ rules:
     match: {type: domain_suffix, value: cn}
     ownership: standards_defined
     purpose: service_core
-    provenance: {kind: manual_research, source: standards_baseline, reference: "CN country-code top-level domain", observed_at: "2026-09-16"}
-    evidence: {level: candidate, methods: [manual_review]}
-    validation: {state: untested, last_tested: null, tests: []}
+    provenance: {kind: manual_research, source: standards_baseline, reference: "CN country-code top-level domain; live Clash Verge test also observed api.smoot.apple.cn matching DIRECT", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [manual_review, connection_log]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [routing_match]}
     conflicts: []
-    notes: Only covers the .cn namespace. It is not a substitute for GeoSite CN or CN IP data.
+    notes: Live routing confirms the matcher works, but this rule is not a substitute for GeoSite CN or CN IP data.
+
+validation_observations:
+  - id: cn-gap.bytedance-douyin
+    observed_at: "2026-09-16"
+    source: clash_verge_live_test
+    result: gap
+    examples: [live.douyin.com, douyinpic.com, zjcdn.com, bytegecko.com, byteeffects.com, huoshanstatic.com, bytetcc.com]
+    notes: Mainland-service traffic using non-.cn namespaces fell through MATCH to the default proxy. This is evidence that .cn alone is insufficient, not authorization to add every observed shared CDN domain to CN Direct.
+  - id: cn-gap.cmbchina
+    observed_at: "2026-09-16"
+    source: clash_verge_live_test
+    result: gap
+    examples: [lf12-32-gateway.paas.cmbchina.com]
+    notes: Observed falling through MATCH. Treat as discovery evidence only; banking/service ownership and dependency classification require separate validation before canonical routing inclusion.
