@@ -1,0 +1,31 @@
+schema_version: 1
+module:
+  id: telegram
+  name: Telegram
+  category: communication
+  policy_class: ordinary_proxy
+  status: research
+  owners: [HCloudLab]
+  description: Initial Telegram routing module. Domain candidates are intentionally narrow until live client/session validation is recorded.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, app_session]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: telegram.domain-suffix.telegram-org
+    match: {type: domain_suffix, value: telegram.org}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: manual_research, source: official_service, reference: "Telegram official domain", observed_at: "2026-09-16"}
+    evidence: {level: candidate, methods: [official_domain]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+  - id: telegram.domain-suffix.t-me
+    match: {type: domain_suffix, value: t.me}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: manual_research, source: official_service, reference: "Telegram official short-link domain", observed_at: "2026-09-16"}
+    evidence: {level: candidate, methods: [official_domain]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
