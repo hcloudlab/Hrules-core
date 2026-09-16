@@ -115,6 +115,7 @@ module_bindings:
   youtube: youtube_media
   telegram: telegram_communication
   coinbase: crypto_account
+  bank-of-america: us_banking_account
   interactive-brokers: brokerage_account
   tradingview: stock_market_data
   private: private_direct
