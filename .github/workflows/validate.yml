@@ -27,6 +27,12 @@ jobs:
         run: python tests/test_canonical_validator.py
       - name: Run compiler contract tests
         run: python tests/test_compiler.py
+      - name: Run MetaCubeX adapter tests
+        run: python tests/test_metacubex_adapter.py
+      - name: Build pinned Mihomo provider artifacts
+        run: python generators/build_mihomo_providers.py --only youtube,cn
+      - name: Test Mihomo provider-mode proof config
+        run: python tests/test_mihomo_provider_proof.py
       - name: Run Mihomo topology tests
         run: python tests/test_mihomo_builder.py
       - name: Assert generated Mihomo routing behavior
@@ -50,5 +56,7 @@ jobs:
         run: |
           python generators/build_mihomo.py --include-research
           /tmp/mihomo -t -f build/proof/hrules-mihomo-v0.1.yaml
+      - name: Validate provider-mode proof config with Mihomo
+        run: /tmp/mihomo -t -f build/provider-proof/hrules-mihomo-provider-v0.1.yaml
       - name: Validate transformed existing config with Mihomo
         run: /tmp/mihomo -t -f build/proof/hrules-mihomo-real-fixture.yaml
