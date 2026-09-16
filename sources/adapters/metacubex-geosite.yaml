@@ -1,0 +1,29 @@
+schema_version: 1
+adapter: metacubex_geosite
+source:
+  repository: MetaCubeX/meta-rules-dat
+  license: GPL-3.0
+  branch: meta
+  pinned_commit: 3183259a6636ad3ab4623917d6b01f42ad443aaf
+  review_status: research_approved_for_private_validation
+providers:
+  youtube:
+    upstream_path: geo/geosite/youtube.yaml
+    behavior: domain
+    target_policy: youtube_media
+    required_probes:
+      - +.youtube.com
+      - +.googlevideo.com
+      - +.ytimg.com
+      - +.youtu.be
+  cn:
+    upstream_path: geo/geosite/cn.yaml
+    behavior: domain
+    target_policy: cn_direct
+    required_probes:
+      - +.cn
+notes:
+  - The pinned commit makes validation reproducible.
+  - Upstream data is normalized before provider generation.
+  - This manifest does not authorize automatic publication to the public Hrules repository.
+  - License/provenance metadata must travel with generated release artifacts.
