@@ -120,6 +120,14 @@ user_groups:
       - "🌐 全部节点 [系统]"
     optional_slots: ["🎯 固定节点 [自选]", "🏠 ISP / 住宅 [自选]"]
 
+  - policy: us_banking_account
+    name: "🏦 美国银行 [自选]"
+    type: select
+    candidates:
+      - "🇺🇸 美国 [系统]"
+      - "🌐 全部节点 [系统]"
+    optional_slots: ["🎯 固定节点 [自选]", "🏠 ISP / 住宅 [自选]"]
+
   - policy: brokerage_account
     name: "📈 美股 [自选]"
     type: select
