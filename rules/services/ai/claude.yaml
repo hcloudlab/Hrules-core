@@ -35,7 +35,7 @@ rules:
       level: verified
       methods:
         - official_domain
-        - runtime_observation
+        - connection_log
     validation:
       state: passed
       last_tested: "2026-09-16"
