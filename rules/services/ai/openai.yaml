@@ -1,12 +1,12 @@
 schema_version: 1
 module:
   id: openai
-  name: OpenAI
+  name: OpenAI / ChatGPT
   category: ai
   policy_class: sensitive_account
   status: research
   owners: [HCloudLab]
-  description: Proof fixture only; candidate records are not public release rules.
+  description: Research module for OpenAI and ChatGPT first-party service domains. Shared third-party dependencies remain excluded pending validation.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [first_party, dedicated_third_party]
@@ -17,8 +17,58 @@ rules:
     match: {type: domain_suffix, value: openai.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: first_party, source: official_service, reference: null, observed_at: null}
-    evidence: {level: candidate, methods: [official_domain]}
+    provenance: {kind: first_party, source: official_service, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_domain, official_network_guidance]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: Official OpenAI guidance includes *.openai.com.
+
+  - id: openai.domain-suffix.chatgpt-com
+    match: {type: domain_suffix, value: chatgpt.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "ChatGPT web connection observed falling through MATCH before rule addition", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [runtime_observation, official_network_guidance]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: Official OpenAI guidance includes *.chatgpt.com; HCloudLab live test directly observed chatgpt.com:443.
+
+  - id: openai.domain-suffix.auth-openai-com
+    match: {type: domain_suffix, value: auth.openai.com}
+    ownership: first_party
+    purpose: authentication
+    provenance: {kind: first_party, source: official_network_guidance, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_network_guidance]}
     validation: {state: untested, last_tested: null, tests: []}
     conflicts: []
-    notes: Seed fixture only; complete ChatGPT/API/auth dependencies remain to be validated.
+    notes: Candidate auth dependency; requires HCloudLab login-flow validation before release.
+
+  - id: openai.domain-suffix.oaistatic-com
+    match: {type: domain_suffix, value: oaistatic.com}
+    ownership: first_party
+    purpose: static_asset
+    provenance: {kind: first_party, source: official_network_guidance, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_network_guidance]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Officially listed by OpenAI; runtime necessity still to be validated.
+
+  - id: openai.domain-suffix.oaiusercontent-com
+    match: {type: domain_suffix, value: oaiusercontent.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: first_party, source: official_network_guidance, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_network_guidance]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Officially listed by OpenAI; includes file/content delivery use cases.
+
+  - id: openai.domain-suffix.oaistatsig-com
+    match: {type: domain_suffix, value: oaistatsig.com}
+    ownership: first_party
+    purpose: telemetry
+    provenance: {kind: first_party, source: official_network_guidance, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_network_guidance]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Officially listed by OpenAI, but telemetry is not assumed service-critical without runtime validation.
