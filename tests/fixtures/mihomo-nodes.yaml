@@ -1,0 +1,17 @@
+proxies:
+  - name: "美国 Test-1"
+    type: http
+    server: 127.0.0.1
+    port: 18081
+  - name: "美国 Test-2"
+    type: http
+    server: 127.0.0.1
+    port: 18082
+  - name: "日本 Test-1"
+    type: http
+    server: 127.0.0.1
+    port: 18083
+  - name: "新加坡 Test-1"
+    type: http
+    server: 127.0.0.1
+    port: 18084
