@@ -1,0 +1,88 @@
+schema_version: 1
+policy_version: v0.1
+status: design_baseline
+
+# Canonical modules identify traffic. This file maps those modules to logical
+# routing policies. Client templates decide how each logical policy is rendered.
+
+logical_policies:
+  sensitive_ai:
+    display_name: "🔐 Claude / OpenAI [自选]"
+    behavior: sensitive_account
+    user_visible: true
+    egress_requirements:
+      prioritize_consistency: true
+      require_static_ip: false
+      require_residential_or_isp: false
+      force_country: null
+      allow_region_internal_auto_selection: true
+    notes:
+      - Stable airport nodes are valid choices.
+      - Avoid uncontrolled egress changes; do not claim this policy prevents account risk.
+
+  general_ai:
+    display_name: "🤖 AI 服务 [自选]"
+    behavior: region_preferred
+    user_visible: true
+    egress_requirements:
+      prioritize_consistency: false
+      require_static_ip: false
+      require_residential_or_isp: false
+      force_country: null
+      allow_region_internal_auto_selection: true
+
+  crypto_account:
+    display_name: "💰 虚拟货币 [自选]"
+    behavior: sensitive_account
+    user_visible: true
+    egress_requirements:
+      prioritize_consistency: true
+      require_static_ip: false
+      require_residential_or_isp: false
+      force_country: null
+      allow_region_internal_auto_selection: true
+
+  us_banking_account:
+    display_name: "🏦 美国银行 [自选]"
+    behavior: sensitive_account
+    user_visible: true
+    egress_requirements:
+      prioritize_consistency: true
+      require_static_ip: false
+      require_residential_or_isp: false
+      force_country: null
+      allow_region_internal_auto_selection: true
+
+  brokerage_account:
+    display_name: "📈 美股 [自选]"
+    behavior: sensitive_account
+    user_visible: true
+    egress_requirements:
+      prioritize_consistency: true
+      require_static_ip: false
+      require_residential_or_isp: false
+      force_country: null
+      allow_region_internal_auto_selection: true
+
+  stock_market_data:
+    display_name: "📈 美股 [自选]"
+    behavior: informational
+    user_visible: false
+    inherit_user_choice_from: brokerage_account
+    notes:
+      - Canonical identity remains separate from brokerage/account traffic.
+      - v0.1 may reuse the same visible user choice without pretending both traffic classes have the same semantics.
+
+  private_direct:
+    display_name: DIRECT
+    behavior: direct_preferred
+    user_visible: false
+
+module_bindings:
+  claude: sensitive_ai
+  openai: sensitive_ai
+  gemini: general_ai
+  coinbase: crypto_account
+  interactive-brokers: brokerage_account
+  tradingview: stock_market_data
+  private: private_direct
