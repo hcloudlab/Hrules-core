@@ -1,0 +1,166 @@
+schema_version: 1
+status: research
+
+# This registry records candidates and provenance only.
+# Inclusion here does not mean upstream data may be copied or redistributed.
+# License/reuse review and validation are required before publication.
+
+sources:
+  metacubex_meta_rules_dat:
+    repository: MetaCubeX/meta-rules-dat
+    role: primary_candidate
+    license: GPL-3.0
+    outputs:
+      - mihomo-mrs
+      - mihomo-yaml
+      - sing-box-rule-set
+    candidate_categories:
+      - cn
+      - openai
+      - category-ai-!cn
+      - google-gemini
+      - youtube
+      - telegram
+    notes:
+      - Prefer service-specific categories over one broad AI category where Hrules needs independent policy control.
+      - Upstream issues must be monitored because service rules can lag application traffic changes.
+
+  loyalsoldier_clash_rules:
+    repository: Loyalsoldier/clash-rules
+    role: baseline_candidate
+    license: GPL-3.0
+    candidate_categories:
+      - direct
+      - proxy
+      - reject
+      - private
+      - google
+      - telegramcidr
+      - lancidr
+      - cncidr
+      - applications
+    notes:
+      - Useful for broad baseline routing and CN/private/reject layers.
+      - Not the preferred sole source for Hrules service-specific AI/financial policy.
+
+  blackmatrix7_ios_rule_script:
+    repository: blackmatrix7/ios_rule_script
+    role: research_candidate
+    license: GPL-2.0
+    candidate_categories:
+      - Claude
+      - OpenAI
+      - Gemini
+      - Binance
+      - Coinbase
+      - other-service-specific-rules
+    notes:
+      - Strong service-level coverage and useful cross-client research reference.
+      - Repository README/special statements and source-level provenance require review before reuse or derivation.
+      - Prefer research/reference status until reuse policy is explicitly cleared.
+
+  acl4ssr:
+    repository: ACL4SSR/ACL4SSR
+    role: secondary_research
+    license: CC-BY-SA-4.0
+    notes:
+      - Useful for historical and service-specific comparison.
+      - Share-alike implications require explicit review before derived publication.
+
+policy_modules:
+  claude:
+    target_group: "🔐 Claude / OpenAI [自选]"
+    granularity: independent
+    source_priority:
+      - metacubex_meta_rules_dat
+      - blackmatrix7_ios_rule_script
+    validation:
+      - claude_web
+      - claude_auth
+      - claude_assets
+      - claude_app_traffic
+
+  openai:
+    target_group: "🔐 Claude / OpenAI [自选]"
+    granularity: independent
+    source_priority:
+      - metacubex_meta_rules_dat
+      - blackmatrix7_ios_rule_script
+    validation:
+      - chatgpt_web
+      - openai_api
+      - openai_auth
+      - openai_static_assets
+
+  gemini:
+    target_group: "🤖 AI 服务 [自选]"
+    granularity: independent
+    source_priority:
+      - metacubex_meta_rules_dat
+      - blackmatrix7_ios_rule_script
+    validation:
+      - gemini_web
+      - gemini_app
+      - google_api_dependencies
+    notes:
+      - Do not assume a single obvious Gemini domain is sufficient; app traffic can use additional Google API hostnames.
+
+  crypto:
+    target_group: "💰 虚拟货币 [自选]"
+    granularity: service_modules_aggregated_for_v0_1_ui
+    candidate_submodules:
+      - binance
+      - coinbase
+      - kraken
+      - okx
+      - bybit
+    source_priority:
+      - blackmatrix7_ios_rule_script
+      - acl4ssr
+    notes:
+      - Keep exchange modules separate internally even if v0.1 UI exposes one Crypto group.
+      - No default country is encoded at the rule-data layer.
+
+  us_banking:
+    target_group: "🏦 美国银行 [自选]"
+    granularity: institution_modules_aggregated_for_v0_1_ui
+    candidate_submodules:
+      - chase
+      - bank_of_america
+      - wells_fargo
+      - citi
+      - capital_one
+      - american_express
+    source_priority: []
+    status: needs_source_research
+    notes:
+      - Do not build this from guessed domains.
+      - Prefer verified institution-specific domains and captured dependency traffic.
+
+  us_stocks:
+    target_group: "📈 美股 [自选]"
+    granularity: brokerage_and_market_data_separable
+    candidate_submodules:
+      brokerage:
+        - interactive_brokers
+        - schwab
+        - fidelity
+        - robinhood
+        - webull
+      market_data:
+        - tradingview
+        - yahoo_finance
+    source_priority: []
+    status: needs_source_research
+    notes:
+      - Account/brokerage traffic and general market-data traffic must remain separable internally.
+
+release_rules:
+  - upstream_update_never_publishes_directly
+  - provenance_required
+  - license_review_required
+  - normalize_before_merge
+  - deduplicate_before_generation
+  - conflict_check_required
+  - representative_routing_tests_required
+  - generated_artifacts_only_after_validation
