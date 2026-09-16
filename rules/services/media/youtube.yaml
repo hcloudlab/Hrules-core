@@ -6,7 +6,7 @@ module:
   policy_class: ordinary_proxy
   status: validating
   owners: [HCloudLab]
-  description: Initial YouTube routing module. Start narrow with the observed first-party service domain; supporting media/CDN domains remain separate validation work.
+  description: YouTube routing module validated from live Clash Verge traffic. Service identification is kept separate from the user-selected egress policy.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [first_party, dedicated_third_party]
@@ -17,8 +17,18 @@ rules:
     match: {type: domain_suffix, value: youtube.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "www.youtube.com:443 observed falling through MATCH in Hrules Test 2", observed_at: "2026-09-16"}
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "www.youtube.com, studio.youtube.com and accounts.youtube.com observed during live YouTube use", observed_at: "2026-09-16"}
     evidence: {level: corroborated, methods: [official_domain, connection_log]}
     validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Main site routing observed. Playback dependencies such as googlevideo/ytimg require separate validation before release.
+    notes: Main site, Studio and account traffic matched the YouTube policy in the live test.
+
+  - id: youtube.domain-suffix.googlevideo-com
+    match: {type: domain_suffix, value: googlevideo.com}
+    ownership: dedicated_third_party
+    purpose: realtime
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "rr1/r4 googlevideo.com hosts carried YouTube playback traffic; one observed connection transferred about 165 MB while falling through MATCH", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [connection_log, playback_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [playback]}
+    conflicts: []
+    notes: Live evidence establishes googlevideo.com as required playback routing coverage for this test. Keep below verified until source provenance/cross-check requirements are satisfied.
