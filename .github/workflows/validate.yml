@@ -33,6 +33,8 @@ jobs:
         run: python generators/build_mihomo_providers.py --only youtube,cn
       - name: Test Mihomo provider-mode proof config
         run: python tests/test_mihomo_provider_proof.py
+      - name: Test provider-mode transformation of an existing Mihomo config
+        run: python tests/test_mihomo_real_provider_builder.py
       - name: Run Mihomo topology tests
         run: python tests/test_mihomo_builder.py
       - name: Assert generated Mihomo routing behavior
@@ -58,5 +60,7 @@ jobs:
           /tmp/mihomo -t -f build/proof/hrules-mihomo-v0.1.yaml
       - name: Validate provider-mode proof config with Mihomo
         run: /tmp/mihomo -t -f build/provider-proof/hrules-mihomo-provider-v0.1.yaml
+      - name: Validate provider-mode transformed config with Mihomo
+        run: /tmp/mihomo -t -f build/proof/hrules-mihomo-real-provider-fixture.yaml
       - name: Validate transformed existing config with Mihomo
         run: /tmp/mihomo -t -f build/proof/hrules-mihomo-real-fixture.yaml
