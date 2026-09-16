@@ -28,7 +28,7 @@ rules:
     ownership: dedicated_third_party
     purpose: realtime
     provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "rr1/r4 googlevideo.com hosts carried YouTube playback traffic; one observed connection transferred about 165 MB while falling through MATCH", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [connection_log, playback_observation]}
+    evidence: {level: corroborated, methods: [connection_log, session_observation]}
     validation: {state: partial, last_tested: "2026-09-16", tests: [playback]}
     conflicts: []
     notes: Live evidence establishes googlevideo.com as required playback routing coverage for this test. Keep below verified until source provenance/cross-check requirements are satisfied.
