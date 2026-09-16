@@ -1,0 +1,71 @@
+name: Validate Hrules Core
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install validation dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements-dev.txt
+
+      - name: Validate canonical modules
+        run: python scripts/validate_canonical.py rules
+
+      - name: Validate policy mappings
+        run: python scripts/validate_policy.py
+
+      - name: Detect cross-module conflicts
+        run: python scripts/detect_conflicts.py rules
+
+      - name: Run semantic proof tests
+        run: python tests/test_canonical_validator.py
+
+      - name: Run compiler contract tests
+        run: python tests/test_compiler.py
+
+      - name: Run Mihomo topology tests
+        run: python tests/test_mihomo_builder.py
+
+      - name: Build Mihomo research proof config
+        run: python generators/build_mihomo.py --include-research
+
+      - name: Parse generated YAML
+        run: |
+          python - <<'PY'
+          import pathlib, yaml
+          p = pathlib.Path('build/proof/hrules-mihomo-v0.1.yaml')
+          data = yaml.safe_load(p.read_text(encoding='utf-8'))
+          assert isinstance(data, dict)
+          assert data.get('mode') == 'rule'
+          assert data.get('proxy-groups')
+          assert data.get('rules')
+          print(f"parsed: groups={len(data['proxy-groups'])} rules={len(data['rules'])}")
+          PY
+
+      - name: Download latest Mihomo linux amd64
+        shell: bash
+        run: |
+          set -euo pipefail
+          api='https://api.github.com/repos/MetaCubeX/mihomo/releases/latest'
+          url="$(curl -fsSL "$api" | jq -r '.assets[] | select(.name | test("^mihomo-linux-amd64-v[0-9].*\\.gz$")) | .browser_download_url' | head -n1)"
+          test -n "$url" -a "$url" != null
+          echo "mihomo asset: $url"
+          curl -fsSL "$url" -o /tmp/mihomo.gz
+          gzip -dc /tmp/mihomo.gz > /tmp/mihomo
+          chmod +x /tmp/mihomo
+          /tmp/mihomo -v
+
+      - name: Validate generated config with Mihomo
+        run: /tmp/mihomo -t -f build/proof/hrules-mihomo-v0.1.yaml
