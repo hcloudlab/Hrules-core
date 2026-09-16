@@ -18,7 +18,7 @@ rules:
     ownership: first_party
     purpose: service_core
     provenance: {kind: first_party, source: official_service, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [official_domain, official_network_guidance]}
+    evidence: {level: corroborated, methods: [official_domain, official_documentation]}
     validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
     notes: Official OpenAI guidance includes *.openai.com; API/auth flows remain to be tested.
@@ -28,7 +28,7 @@ rules:
     ownership: first_party
     purpose: service_core
     provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "A/B live test: Test 1 fell through MATCH; Test 2 matched DomainSuffix(chatgpt.com) and routed through Claude/OpenAI -> US system group -> Jiuyun US node", observed_at: "2026-09-16"}
-    evidence: {level: verified, methods: [runtime_observation, official_network_guidance, ab_routing_test]}
+    evidence: {level: verified, methods: [official_documentation, connection_log, session_observation]}
     validation: {state: passed, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
     notes: Verified for ChatGPT web routing in Clash Verge/Mihomo with a real Jiuyun subscription. Auth/API remain separate release-gate tests.
@@ -38,7 +38,7 @@ rules:
     ownership: first_party
     purpose: authentication
     provenance: {kind: first_party, source: official_network_guidance, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [official_network_guidance]}
+    evidence: {level: corroborated, methods: [official_documentation]}
     validation: {state: untested, last_tested: null, tests: []}
     conflicts: []
     notes: Candidate auth dependency; requires HCloudLab login-flow validation before release.
@@ -48,7 +48,7 @@ rules:
     ownership: first_party
     purpose: static_asset
     provenance: {kind: first_party, source: official_network_guidance, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [official_network_guidance]}
+    evidence: {level: corroborated, methods: [official_documentation]}
     validation: {state: untested, last_tested: null, tests: []}
     conflicts: []
     notes: Officially listed by OpenAI; runtime necessity still to be validated.
@@ -58,7 +58,7 @@ rules:
     ownership: first_party
     purpose: service_core
     provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live ChatGPT session observed oaiusercontent.com subdomains matching DomainSuffix(oaiusercontent.com) through Claude/OpenAI -> US system group", observed_at: "2026-09-16"}
-    evidence: {level: verified, methods: [runtime_observation, official_network_guidance]}
+    evidence: {level: verified, methods: [official_documentation, connection_log, session_observation]}
     validation: {state: passed, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
     notes: Verified during a live ChatGPT session for content transfer. File upload/download edge cases remain future tests.
@@ -68,7 +68,7 @@ rules:
     ownership: first_party
     purpose: telemetry
     provenance: {kind: first_party, source: official_network_guidance, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [official_network_guidance]}
+    evidence: {level: corroborated, methods: [official_documentation]}
     validation: {state: untested, last_tested: null, tests: []}
     conflicts: []
     notes: Officially listed by OpenAI, but telemetry is not assumed service-critical without runtime validation.
