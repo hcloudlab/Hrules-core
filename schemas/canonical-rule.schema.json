@@ -115,7 +115,7 @@
       "properties": {
         "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
         "match": {"$ref": "#/$defs/match"},
-        "ownership": {"enum": ["first_party", "dedicated_third_party", "shared_third_party", "unknown"]},
+        "ownership": {"enum": ["first_party", "dedicated_third_party", "shared_third_party", "standards_defined", "unknown"]},
         "purpose": {"enum": ["service_core", "authentication", "api", "static_asset", "download", "realtime", "payment", "market_data", "telemetry", "analytics", "advertising", "unknown"]},
         "provenance": {"$ref": "#/$defs/provenance"},
         "evidence": {"$ref": "#/$defs/evidence"},
@@ -144,7 +144,7 @@
         "allowed_ownership": {
           "type": "array",
           "uniqueItems": true,
-          "items": {"enum": ["first_party", "dedicated_third_party", "shared_third_party", "unknown"]}
+          "items": {"enum": ["first_party", "dedicated_third_party", "shared_third_party", "standards_defined", "unknown"]}
         },
         "required_tests": {
           "type": "array",
