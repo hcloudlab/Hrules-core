@@ -21,17 +21,17 @@ rules:
     evidence: {level: corroborated, methods: [official_domain, official_network_guidance]}
     validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Official OpenAI guidance includes *.openai.com.
+    notes: Official OpenAI guidance includes *.openai.com; API/auth flows remain to be tested.
 
   - id: openai.domain-suffix.chatgpt-com
     match: {type: domain_suffix, value: chatgpt.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "ChatGPT web connection observed falling through MATCH before rule addition", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [runtime_observation, official_network_guidance]}
-    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "A/B live test: Test 1 fell through MATCH; Test 2 matched DomainSuffix(chatgpt.com) and routed through Claude/OpenAI -> US system group -> Jiuyun US node", observed_at: "2026-09-16"}
+    evidence: {level: verified, methods: [runtime_observation, official_network_guidance, ab_routing_test]}
+    validation: {state: passed, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Official OpenAI guidance includes *.chatgpt.com; HCloudLab live test directly observed chatgpt.com:443.
+    notes: Verified for ChatGPT web routing in Clash Verge/Mihomo with a real Jiuyun subscription. Auth/API remain separate release-gate tests.
 
   - id: openai.domain-suffix.auth-openai-com
     match: {type: domain_suffix, value: auth.openai.com}
@@ -57,11 +57,11 @@ rules:
     match: {type: domain_suffix, value: oaiusercontent.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: first_party, source: official_network_guidance, reference: "OpenAI network recommendations", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [official_network_guidance]}
-    validation: {state: untested, last_tested: null, tests: []}
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live ChatGPT session observed oaiusercontent.com subdomains matching DomainSuffix(oaiusercontent.com) through Claude/OpenAI -> US system group", observed_at: "2026-09-16"}
+    evidence: {level: verified, methods: [runtime_observation, official_network_guidance]}
+    validation: {state: passed, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Officially listed by OpenAI; includes file/content delivery use cases.
+    notes: Verified during a live ChatGPT session for content transfer. File upload/download edge cases remain future tests.
 
   - id: openai.domain-suffix.oaistatsig-com
     match: {type: domain_suffix, value: oaistatsig.com}
