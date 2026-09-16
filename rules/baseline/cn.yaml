@@ -21,18 +21,4 @@ rules:
     evidence: {level: corroborated, methods: [manual_review, connection_log]}
     validation: {state: partial, last_tested: "2026-09-16", tests: [routing_match]}
     conflicts: []
-    notes: Live routing confirms the matcher works, but this rule is not a substitute for GeoSite CN or CN IP data.
-
-validation_observations:
-  - id: cn-gap.bytedance-douyin
-    observed_at: "2026-09-16"
-    source: clash_verge_live_test
-    result: gap
-    examples: [live.douyin.com, douyinpic.com, zjcdn.com, bytegecko.com, byteeffects.com, huoshanstatic.com, bytetcc.com]
-    notes: Mainland-service traffic using non-.cn namespaces fell through MATCH to the default proxy. This is evidence that .cn alone is insufficient, not authorization to add every observed shared CDN domain to CN Direct.
-  - id: cn-gap.cmbchina
-    observed_at: "2026-09-16"
-    source: clash_verge_live_test
-    result: gap
-    examples: [lf12-32-gateway.paas.cmbchina.com]
-    notes: Observed falling through MATCH. Treat as discovery evidence only; banking/service ownership and dependency classification require separate validation before canonical routing inclusion.
+    notes: Live routing confirms the matcher works, but this rule is not a substitute for GeoSite CN or CN IP data. Gap observations are tracked separately under docs/validation-observations-cn-2026-09-16.md.
