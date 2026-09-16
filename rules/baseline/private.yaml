@@ -1,0 +1,24 @@
+schema_version: 1
+module:
+  id: private
+  name: Private Network
+  category: baseline
+  policy_class: direct_preferred
+  status: research
+  owners: [HCloudLab]
+  description: Minimal proof fixture for direct-preferred private network CIDRs.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party]
+  required_tests: [routing_match]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: private.ip-cidr.rfc1918-10
+    match: {type: ip_cidr, value: 10.0.0.0/8}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: manual_research, source: standards_baseline, reference: RFC1918, observed_at: null}
+    evidence: {level: candidate, methods: [manual_review]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Proof fixture only; complete private/reserved network baseline will be defined separately.
