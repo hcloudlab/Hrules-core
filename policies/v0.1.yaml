@@ -31,6 +31,28 @@ logical_policies:
       force_country: null
       allow_region_internal_auto_selection: true
 
+  youtube_media:
+    display_name: "📺 YouTube [自选]"
+    behavior: ordinary_proxy
+    user_visible: true
+    egress_requirements:
+      prioritize_consistency: false
+      require_static_ip: false
+      require_residential_or_isp: false
+      force_country: null
+      allow_region_internal_auto_selection: true
+
+  telegram_communication:
+    display_name: "💬 Telegram [自选]"
+    behavior: ordinary_proxy
+    user_visible: true
+    egress_requirements:
+      prioritize_consistency: false
+      require_static_ip: false
+      require_residential_or_isp: false
+      force_country: null
+      allow_region_internal_auto_selection: true
+
   crypto_account:
     display_name: "💰 虚拟货币 [自选]"
     behavior: sensitive_account
@@ -78,11 +100,22 @@ logical_policies:
     behavior: direct_preferred
     user_visible: false
 
+  cn_direct:
+    display_name: DIRECT
+    behavior: direct_preferred
+    user_visible: false
+    notes:
+      - v0.1 canonical baseline currently covers only the .cn namespace.
+      - Broader CN domains/IPs require a reviewed upstream adapter before release.
+
 module_bindings:
   claude: sensitive_ai
   openai: sensitive_ai
   gemini: general_ai
+  youtube: youtube_media
+  telegram: telegram_communication
   coinbase: crypto_account
   interactive-brokers: brokerage_account
   tradingview: stock_market_data
   private: private_direct
+  cn: cn_direct
