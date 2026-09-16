@@ -1,0 +1,43 @@
+schema_version: 1
+module:
+  id: claude
+  name: Claude
+  category: ai
+  policy_class: sensitive_account
+  status: research
+  owners:
+    - HCloudLab
+  description: Proof fixture for the Hrules canonical schema. Candidate records are not public release rules.
+
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership:
+    - first_party
+    - dedicated_third_party
+  required_tests:
+    - web_access
+    - auth_flow
+  forbid_unresolved_policy_conflicts: true
+
+rules:
+  - id: claude.domain-suffix.claude-ai
+    match:
+      type: domain_suffix
+      value: claude.ai
+    ownership: first_party
+    purpose: service_core
+    provenance:
+      kind: first_party
+      source: official_service
+      reference: null
+      observed_at: null
+    evidence:
+      level: candidate
+      methods:
+        - official_domain
+    validation:
+      state: untested
+      last_tested: null
+      tests: []
+    conflicts: []
+    notes: Seed fixture only. Must pass HCloudLab session validation before release.
