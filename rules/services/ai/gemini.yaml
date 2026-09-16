@@ -18,7 +18,7 @@ rules:
     ownership: first_party
     purpose: service_core
     provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live Clash Verge/Mihomo test matched gemini.google.com and routed through AI service -> automatic selection using a real Jiuyun subscription", observed_at: "2026-09-16"}
-    evidence: {level: verified, methods: [official_domain, runtime_observation]}
+    evidence: {level: verified, methods: [official_domain, connection_log]}
     validation: {state: passed, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
     notes: Gemini web routing verified. accounts.google.com and other shared Google dependencies remain outside this module pending auth-flow analysis.
