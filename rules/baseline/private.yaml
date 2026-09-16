@@ -62,7 +62,7 @@ rules:
     validation: {state: untested, last_tested: null, tests: []}
     conflicts: []
   - id: private.ip-cidr6-loopback
-    match: {type: ip_cidr6, value: ::1/128}
+    match: {type: ip_cidr6, value: "::1/128"}
     ownership: standards_defined
     purpose: service_core
     provenance: {kind: manual_research, source: standards_baseline, reference: RFC4291, observed_at: "2026-09-16"}
