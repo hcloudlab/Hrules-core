@@ -1,0 +1,30 @@
+schema_version: 1
+module:
+  id: bank-of-america
+  name: Bank of America
+  category: banking
+  policy_class: sensitive_account
+  status: research
+  owners: [HCloudLab]
+  description: Research module for Bank of America first-party traffic observed during a real web session. Shared third-party dependencies remain excluded pending validation.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, auth_flow]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: bank-of-america.domain-suffix.bankofamerica-com
+    match: {type: domain_suffix, value: bankofamerica.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live Bank of America web session observed www.bankofamerica.com, secure.bankofamerica.com, tilt.bankofamerica.com, chat.bankofamerica.com, chatevents.bankofamerica.com, and glassbox-hlx-igw.bankofamerica.com under the bankofamerica.com namespace", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [connection_log, session_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: First-party namespace observed during a real Bank of America session. Authentication flow has not yet been validated through the dedicated Hrules banking policy, so this record is not release-ready.
+
+# Observed in the same session but deliberately NOT claimed by this module:
+# - d.agkn.com
+# - cdn.cookielaw.org
+# - stun.cdn-net.com
+# These are shared/third-party candidates and require separate ownership and necessity analysis.
