@@ -6,7 +6,7 @@ module:
   policy_class: region_preferred
   status: research
   owners: [HCloudLab]
-  description: Proof fixture for an AI service whose Google dependencies require overlap/dependency analysis.
+  description: Research module for Gemini; shared Google authentication and platform dependencies require separate overlap/dependency analysis.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [first_party, dedicated_third_party]
@@ -17,8 +17,8 @@ rules:
     match: {type: domain_suffix, value: gemini.google.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: first_party, source: official_service, reference: null, observed_at: null}
-    evidence: {level: candidate, methods: [official_domain]}
-    validation: {state: untested, last_tested: null, tests: []}
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live Clash Verge/Mihomo test matched gemini.google.com and routed through AI service -> automatic selection using a real Jiuyun subscription", observed_at: "2026-09-16"}
+    evidence: {level: verified, methods: [official_domain, runtime_observation]}
+    validation: {state: passed, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Seed fixture; broader Google authentication/API dependencies are intentionally not claimed here yet.
+    notes: Gemini web routing verified. accounts.google.com and other shared Google dependencies remain outside this module pending auth-flow analysis.
