@@ -1,0 +1,24 @@
+schema_version: 1
+module:
+  id: coinbase
+  name: Coinbase
+  category: crypto
+  policy_class: sensitive_account
+  status: research
+  owners: [HCloudLab]
+  description: Proof fixture demonstrating exchange identity remains separate from general crypto information traffic.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, auth_flow]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: coinbase.domain-suffix.coinbase-com
+    match: {type: domain_suffix, value: coinbase.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: first_party, source: official_service, reference: null, observed_at: null}
+    evidence: {level: candidate, methods: [official_domain]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Seed fixture only; wallet, auth, API and shared dependencies require separate review.
