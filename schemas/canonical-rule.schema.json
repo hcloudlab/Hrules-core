@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hcloudlab.invalid/hrules/canonical-rule.schema.json",
+  "title": "Hrules Canonical Rule Module",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "module", "rules"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "module": {"$ref": "#/$defs/module"},
+    "release_policy": {"$ref": "#/$defs/releasePolicy"},
+    "exclusions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/exclusion"},
+      "default": []
+    },
+    "rules": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/rule"}
+    }
+  },
+  "$defs": {
+    "module": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "category", "policy_class", "status", "owners"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "name": {"type": "string", "minLength": 1},
+        "category": {
+          "enum": ["ai", "crypto", "banking", "brokerage", "market_data", "media", "communication", "platform", "baseline", "blocking"]
+        },
+        "policy_class": {
+          "enum": ["ordinary_proxy", "region_preferred", "sensitive_account", "direct_preferred", "reject", "informational"]
+        },
+        "status": {
+          "enum": ["research", "validating", "release_candidate", "published", "deprecated"]
+        },
+        "owners": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "description": {"type": ["string", "null"]}
+      }
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": {
+          "enum": ["domain", "domain_suffix", "domain_keyword", "ip_cidr", "ip_cidr6", "process_name", "process_path"]
+        },
+        "value": {"type": "string", "minLength": 1}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "source"],
+      "properties": {
+        "kind": {
+          "enum": ["first_party", "upstream", "hcloudlab_observation", "community_report", "manual_research"]
+        },
+        "source": {"type": "string", "minLength": 1},
+        "reference": {"type": ["string", "null"]},
+        "observed_at": {"type": ["string", "null"], "format": "date"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "methods"],
+      "properties": {
+        "level": {"enum": ["candidate", "corroborated", "verified"]},
+        "methods": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["official_domain", "official_documentation", "upstream_ruleset", "dns_observation", "connection_log", "session_observation", "app_observation", "manual_review"]
+          }
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "tests"],
+      "properties": {
+        "state": {"enum": ["untested", "partial", "passed", "failed", "stale"]},
+        "last_tested": {"type": ["string", "null"], "format": "date"},
+        "tests": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"}
+        }
+      }
+    },
+    "conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "relation"],
+      "properties": {
+        "module": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "relation": {"enum": ["duplicate", "overlap", "dependency", "policy_conflict"]},
+        "resolution": {"type": ["string", "null"]}
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "match", "ownership", "purpose", "provenance", "evidence", "validation", "conflicts"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+        "match": {"$ref": "#/$defs/match"},
+        "ownership": {"enum": ["first_party", "dedicated_third_party", "shared_third_party", "unknown"]},
+        "purpose": {"enum": ["service_core", "authentication", "api", "static_asset", "download", "realtime", "payment", "market_data", "telemetry", "analytics", "advertising", "unknown"]},
+        "provenance": {"$ref": "#/$defs/provenance"},
+        "evidence": {"$ref": "#/$defs/evidence"},
+        "validation": {"$ref": "#/$defs/validation"},
+        "conflicts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/conflict"}
+        },
+        "notes": {"type": ["string", "null"]}
+      }
+    },
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["match", "reason"],
+      "properties": {
+        "match": {"$ref": "#/$defs/match"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "releasePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minimum_evidence": {"enum": ["candidate", "corroborated", "verified"]},
+        "allowed_ownership": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["first_party", "dedicated_third_party", "shared_third_party", "unknown"]}
+        },
+        "required_tests": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"}
+        },
+        "forbid_unresolved_policy_conflicts": {"type": "boolean"}
+      }
+    }
+  }
+}
