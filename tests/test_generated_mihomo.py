@@ -35,7 +35,13 @@ def main():
     check("YouTube routed to YouTube group", "DOMAIN-SUFFIX,youtube.com,📺 YouTube [自选]" in rules)
     check("Telegram routed to Telegram group", "DOMAIN-SUFFIX,telegram.org,💬 Telegram [自选]" in rules)
     check("Telegram short links routed to Telegram group", "DOMAIN-SUFFIX,t.me,💬 Telegram [自选]" in rules)
-    check("Coinbase routed to crypto group", "DOMAIN-SUFFIX,coinbase.com,💰 虚拟货币 [自选]" in rules)
+
+    crypto = "💰 虚拟货币 [自选]"
+    check("Coinbase routed to crypto group", f"DOMAIN-SUFFIX,coinbase.com,{crypto}" in rules)
+    check("Binance routed to crypto group", f"DOMAIN-SUFFIX,binance.com,{crypto}" in rules)
+    check("OKX routed to crypto group", f"DOMAIN-SUFFIX,okx.com,{crypto}" in rules)
+    check("Bybit routed to crypto group", f"DOMAIN-SUFFIX,bybit.com,{crypto}" in rules)
+    check("Kraken routed to crypto group", f"DOMAIN-SUFFIX,kraken.com,{crypto}" in rules)
 
     banking = "🏦 美国银行 [自选]"
     check("Bank of America routed to US banking group", f"DOMAIN-SUFFIX,bankofamerica.com,{banking}" in rules)
@@ -61,6 +67,9 @@ def main():
     check("sensitive AI has at least one usable choice", bool(sensitive))
     check("YouTube group exists", "📺 YouTube [自选]" in groups)
     check("Telegram group exists", "💬 Telegram [自选]" in groups)
+    check("Crypto group exists", crypto in groups)
+    check("Crypto excludes cross-region global auto", "♻️ 自动选择 [系统]" not in groups[crypto]["proxies"])
+    check("Crypto has at least one usable choice", bool(groups[crypto]["proxies"]))
     check("US banking group exists", banking in groups)
     check("US banking excludes cross-region global auto", "♻️ 自动选择 [系统]" not in groups[banking]["proxies"])
     check("US banking has at least one usable choice", bool(groups[banking]["proxies"]))
