@@ -21,4 +21,13 @@ rules:
     evidence: {level: corroborated, methods: [official_domain, official_documentation]}
     validation: {state: untested, last_tested: null, tests: []}
     conflicts: []
-    notes: Core exchange namespace only. Do not infer Binance.US or shared third-party dependencies into this module without separate validation.
+    notes: Core Binance exchange namespace.
+  - id: binance.domain-suffix.binance-us
+    match: {type: domain_suffix, value: binance.us}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: runtime_observation, source: hcloudlab_clash_verge, reference: "stream.binance.us:9443", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [runtime_observation, official_domain]}
+    validation: {state: observed, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: Added after real Clash Verge traffic showed stream.binance.us falling through MATCH instead of the crypto policy.
