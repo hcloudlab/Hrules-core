@@ -1,0 +1,24 @@
+schema_version: 1
+module:
+  id: american-express
+  name: American Express
+  category: banking
+  policy_class: sensitive_account
+  status: research
+  owners: [HCloudLab]
+  description: Research module for American Express first-party account traffic based on official American Express login properties. Runtime validation through Hrules remains pending.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, auth_flow]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: american-express.domain-suffix.americanexpress-com
+    match: {type: domain_suffix, value: americanexpress.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: first_party, source: official_service, reference: "American Express official login and account pages on americanexpress.com", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_domain, manual_review]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Official first-party namespace. Keep in research until web and authentication flows are validated through the dedicated Hrules banking policy.
