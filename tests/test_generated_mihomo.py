@@ -39,6 +39,7 @@ def main():
     crypto = "💰 虚拟货币 [自选]"
     check("Coinbase routed to crypto group", f"DOMAIN-SUFFIX,coinbase.com,{crypto}" in rules)
     check("Binance routed to crypto group", f"DOMAIN-SUFFIX,binance.com,{crypto}" in rules)
+    check("Binance.US routed to crypto group", f"DOMAIN-SUFFIX,binance.us,{crypto}" in rules)
     check("OKX routed to crypto group", f"DOMAIN-SUFFIX,okx.com,{crypto}" in rules)
     check("Bybit routed to crypto group", f"DOMAIN-SUFFIX,bybit.com,{crypto}" in rules)
     check("Kraken routed to crypto group", f"DOMAIN-SUFFIX,kraken.com,{crypto}" in rules)
@@ -53,8 +54,10 @@ def main():
     check("Capital One routed to US banking group", f"DOMAIN-SUFFIX,capitalone.com,{banking}" in rules)
     check("American Express routed to US banking group", f"DOMAIN-SUFFIX,americanexpress.com,{banking}" in rules)
 
-    check("IBKR routed to stocks group", "DOMAIN-SUFFIX,interactivebrokers.com,📈 美股 [自选]" in rules)
-    check("TradingView inherits stocks user choice", "DOMAIN-SUFFIX,tradingview.com,📈 美股 [自选]" in rules)
+    stocks = "📈 美股 [自选]"
+    check("IBKR routed to stocks group", f"DOMAIN-SUFFIX,interactivebrokers.com,{stocks}" in rules)
+    check("IBKR short domain routed to stocks group", f"DOMAIN-SUFFIX,ibkr.com,{stocks}" in rules)
+    check("TradingView inherits stocks user choice", f"DOMAIN-SUFFIX,tradingview.com,{stocks}" in rules)
     check("RFC1918 10/8 routed DIRECT", "IP-CIDR,10.0.0.0/8,DIRECT" in rules)
     check("RFC1918 172/12 routed DIRECT", "IP-CIDR,172.16.0.0/12,DIRECT" in rules)
     check("RFC1918 192.168/16 routed DIRECT", "IP-CIDR,192.168.0.0/16,DIRECT" in rules)
