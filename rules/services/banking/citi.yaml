@@ -1,0 +1,27 @@
+schema_version: 1
+module:
+  id: citi
+  name: Citi
+  category: banking
+  policy_class: sensitive_account
+  status: research
+  owners: [HCloudLab]
+  description: Research module for Citi. A real access attempt reached a site/CDN denial page, so the session is insufficient to validate a complete Citi routing rule.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, auth_flow]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: citi.domain-suffix.citi-com
+    match: {type: domain_suffix, value: citi.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: hcloudlab_observation, source: browser_live_test, reference: "Access to www.citi.com returned a permission-denied page with an errors.edgesuite.net reference; this proves an attempted Citi first-party request but does not validate the full Citi web/auth flow", observed_at: "2026-09-16"}
+    evidence: {level: candidate, methods: [session_observation]}
+    validation: {state: failed, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: Keep in research. Do not infer that the failure was caused by Hrules, the selected exit IP, geography, reputation, or any single factor without controlled testing.
+
+# errors.edgesuite.net is deliberately NOT assigned to Citi. A CDN error host appearing on
+# a denial page is not evidence that the whole shared CDN namespace belongs in a banking rule.
