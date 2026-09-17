@@ -1,0 +1,24 @@
+schema_version: 1
+module:
+  id: binance
+  name: Binance
+  category: crypto
+  policy_class: sensitive_account
+  status: research
+  owners: [HCloudLab]
+  description: Research module for Binance first-party exchange traffic. Account, auth, API and region-specific dependencies require separate validation.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, auth_flow]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: binance.domain-suffix.binance-com
+    match: {type: domain_suffix, value: binance.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: first_party, source: official_service, reference: "https://www.binance.com/", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_domain, official_documentation]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Core exchange namespace only. Do not infer Binance.US or shared third-party dependencies into this module without separate validation.
