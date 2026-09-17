@@ -99,12 +99,25 @@ def target_name(module_id: str, policy_doc: dict) -> str:
     return resolved["display_name"]
 
 
-def mihomo_line(rule: dict, group: str) -> str:
+def mihomo_matcher(rule: dict) -> str:
+    """Lower one canonical matcher to a policy-free Mihomo classical payload item."""
     m = rule["match"]
-    mapping = {"domain":"DOMAIN","domain_suffix":"DOMAIN-SUFFIX","domain_keyword":"DOMAIN-KEYWORD","ip_cidr":"IP-CIDR","ip_cidr6":"IP-CIDR6","process_name":"PROCESS-NAME","process_path":"PROCESS-PATH"}
+    mapping = {
+        "domain": "DOMAIN",
+        "domain_suffix": "DOMAIN-SUFFIX",
+        "domain_keyword": "DOMAIN-KEYWORD",
+        "ip_cidr": "IP-CIDR",
+        "ip_cidr6": "IP-CIDR6",
+        "process_name": "PROCESS-NAME",
+        "process_path": "PROCESS-PATH",
+    }
     if m["type"] not in mapping:
         raise ValueError(f"unsupported Mihomo matcher: {m['type']}")
-    return f"{mapping[m['type']]},{m['value']},{group}"
+    return f"{mapping[m['type']]},{m['value']}"
+
+
+def mihomo_line(rule: dict, group: str) -> str:
+    return f"{mihomo_matcher(rule)},{group}"
 
 
 def shadowrocket_line(rule: dict, group: str) -> str:
