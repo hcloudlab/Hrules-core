@@ -115,6 +115,10 @@ module_bindings:
   youtube: youtube_media
   telegram: telegram_communication
   coinbase: crypto_account
+  binance: crypto_account
+  okx: crypto_account
+  bybit: crypto_account
+  kraken: crypto_account
   bank-of-america: us_banking_account
   chase: us_banking_account
   wells-fargo: us_banking_account
