@@ -33,10 +33,21 @@ def publishable(module: dict, rule: dict) -> bool:
     rank = {"candidate": 0, "corroborated": 1, "verified": 2}
     minimum = policy.get("minimum_evidence", "verified")
     evidence = rule.get("evidence", {}).get("level", "candidate")
-    state = rule.get("validation", {}).get("state", "untested")
+    validation = rule.get("validation", {})
+    state = validation.get("state", "untested")
+    completed_tests = set(validation.get("tests", []))
+    required_tests = set(policy.get("required_tests", []))
     ownership = rule.get("ownership")
     allowed = policy.get("allowed_ownership", [])
-    return rank.get(evidence, -1) >= rank.get(minimum, 2) and state == "passed" and (not allowed or ownership in allowed)
+    conflicts = rule.get("conflicts", [])
+    conflicts_ok = not policy.get("forbid_unresolved_policy_conflicts", False) or not conflicts
+    return (
+        rank.get(evidence, -1) >= rank.get(minimum, 2)
+        and state == "passed"
+        and required_tests.issubset(completed_tests)
+        and (not allowed or ownership in allowed)
+        and conflicts_ok
+    )
 
 
 def resolve_policy(module_id: str, policy_doc: dict) -> tuple[str, dict]:
@@ -62,8 +73,6 @@ def resolve_policy(module_id: str, policy_doc: dict) -> tuple[str, dict]:
 
 def target_name(module_id: str, policy_doc: dict) -> str:
     policy_id, resolved = resolve_policy(module_id, policy_doc)
-    # DIRECT/REJECT remain concrete terminal actions. All other names are logical
-    # template interfaces; templates must provide a group/outbound with this name.
     display = resolved["display_name"]
     if display in {"DIRECT", "REJECT"}:
         return display
