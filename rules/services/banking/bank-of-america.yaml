@@ -4,9 +4,9 @@ module:
   name: Bank of America
   category: banking
   policy_class: sensitive_account
-  status: research
+  status: validating
   owners: [HCloudLab]
-  description: Research module for Bank of America first-party traffic observed during a real web session. Shared third-party dependencies remain excluded pending validation.
+  description: Bank of America first-party traffic observed and successfully routed through the dedicated Hrules US banking policy in a real Clash Verge/Mihomo session. Shared third-party dependencies remain excluded.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [first_party, dedicated_third_party]
@@ -17,14 +17,16 @@ rules:
     match: {type: domain_suffix, value: bankofamerica.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live Bank of America web session observed www.bankofamerica.com, secure.bankofamerica.com, tilt.bankofamerica.com, chat.bankofamerica.com, chatevents.bankofamerica.com, and glassbox-hlx-igw.bankofamerica.com under the bankofamerica.com namespace", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [connection_log, session_observation]}
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live sessions observed www/secure/tilt/chat/chatevents/glassbox-hlx-igw/rail/boss/aero/dull and other bankofamerica.com hosts. A dedicated Test 5 configuration routed the namespace through US Banking -> US system group -> Jiuyun US node while shared third-party domains remained on default routing.", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [connection_log, session_observation, ab_routing_test]}
     validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: First-party namespace observed during a real Bank of America session. Authentication flow has not yet been validated through the dedicated Hrules banking policy, so this record is not release-ready.
+    notes: Dedicated routing behavior is validated for web access. Authentication flow has not been validated and remains a release gate; therefore this record is intentionally not promoted to verified/passed.
 
-# Observed in the same session but deliberately NOT claimed by this module:
+# Observed in the same sessions but deliberately NOT claimed by this module:
 # - d.agkn.com
 # - cdn.cookielaw.org
 # - stun.cdn-net.com
+# - onetrust.com family
+# - Google/Google Tag Manager/Google Ads
 # These are shared/third-party candidates and require separate ownership and necessity analysis.
