@@ -10,15 +10,21 @@ release:
 scope:
   clients:
     - mihomo
+  profiles:
+    - basic
+    - ai
+    - us-finance
+    - crypto
+    - finance-pro
+  withheld_profiles:
+    - full
   routing_classes:
     - sensitive_ai
     - general_ai
     - youtube_media
-    - telegram_communication
     - crypto_account
     - us_banking_account
     - brokerage_account
-    - stock_market_data
     - private_direct
     - cn_direct
     - default_proxy
@@ -30,6 +36,7 @@ validated_runtime_examples:
     - coinbase.com
     - bybit.com
     - kraken.com
+    - binance.us
   us_banking_account:
     - bankofamerica.com
     - americanexpress.com
@@ -37,6 +44,7 @@ validated_runtime_examples:
     - connect.secure.wf.com
   brokerage_account:
     - interactivebrokers.com
+    - ibkr.com
   youtube_media:
     - youtube.com
   cn_direct:
@@ -53,9 +61,11 @@ acceptance_corrections:
 release_gates:
   canonical_schema: required
   policy_mapping: required
+  profile_validation: required
   conflict_detection: required
   semantic_tests: required
   compiler_contract_tests: required
+  profile_contract_tests: required
   provider_tests: required
   topology_tests: required
   generated_routing_assertions: required
@@ -65,11 +75,15 @@ release_gates:
 publication_policy:
   upstream_changes_publish_directly: false
   publish_only_after_green_ci: true
+  publish_policy_free_rule_providers: true
+  publish_only_complete_profiles: true
   include_versioned_artifacts: true
   include_sha256: true
   preserve_attribution_and_license_metadata: true
 
 notes:
-  - Sensitive routing controls egress selection; it does not claim to prevent service-side account risk or fraud controls.
+  - RC artifacts validate routing identification only; they do not guarantee authentication, account eligibility, fraud-control, or service-side risk outcomes.
+  - Sensitive routing controls egress selection; it does not claim to prevent account risk or bans.
   - Shared third-party domains are not assigned to sensitive service modules solely because they appear during a session.
-  - Shadowrocket and sing-box/SFM remain initial targets but are not part of this v0.1 Mihomo release candidate gate.
+  - The Full profile is intentionally withheld while citi, okx, telegram and tradingview remain below the RC publication gate.
+  - Shadowrocket, sing-box/SFM, v2rayN and Karing are architectural targets but are not part of this Mihomo RC acceptance gate.
