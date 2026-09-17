@@ -21,12 +21,16 @@ jobs:
         run: python scripts/validate_canonical.py rules
       - name: Validate policy mappings
         run: python scripts/validate_policy.py
+      - name: Validate scenario profiles
+        run: python scripts/validate_profiles.py
       - name: Detect cross-module conflicts
         run: python scripts/detect_conflicts.py rules
       - name: Run semantic proof tests
         run: python tests/test_canonical_validator.py
       - name: Run compiler contract tests
         run: python tests/test_compiler.py
+      - name: Run profile contract tests
+        run: python tests/test_profiles.py
       - name: Run MetaCubeX adapter tests
         run: python tests/test_metacubex_adapter.py
       - name: Exercise fail-closed public publisher
