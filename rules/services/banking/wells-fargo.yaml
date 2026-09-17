@@ -1,0 +1,47 @@
+schema_version: 1
+module:
+  id: wells-fargo
+  name: Wells Fargo
+  category: banking
+  policy_class: sensitive_account
+  status: research
+  owners: [HCloudLab]
+  description: Research module for Wells Fargo traffic observed during a real web session. First-party and candidate dedicated namespaces are kept separate so broad ownership is not inferred from session appearance alone.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, auth_flow]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: wells-fargo.domain-suffix.wellsfargo-com
+    match: {type: domain_suffix, value: wellsfargo.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live Wells Fargo web session observed www.wellsfargo.com, static.wellsfargo.com, connect.secure.wellsfargo.com, and oam.wellsfargo.com", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [connection_log, session_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: First-party Wells Fargo namespace observed in the real session; auth-flow validation through Hrules remains pending.
+
+  - id: wells-fargo.domain-suffix.wellsfargomedia-com
+    match: {type: domain_suffix, value: wellsfargomedia.com}
+    ownership: unknown
+    purpose: static_asset
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Observed www10.wellsfargomedia.com and www17.wellsfargomedia.com during the Wells Fargo session", observed_at: "2026-09-16"}
+    evidence: {level: candidate, methods: [connection_log, session_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: Candidate dependency only. Ownership and necessity must be verified before publication.
+
+  - id: wells-fargo.domain.connect-secure-wf-com
+    match: {type: domain, value: connect.secure.wf.com}
+    ownership: unknown
+    purpose: authentication
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Observed connect.secure.wf.com during the Wells Fargo session", observed_at: "2026-09-16"}
+    evidence: {level: candidate, methods: [connection_log, session_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: Deliberately scoped to the exact observed host. Do not broaden this to DOMAIN-SUFFIX,wf.com until ownership and necessity are established.
+
+# Shared services such as Google, OneTrust, Adobe, Akamai/CDN, analytics and telemetry
+# are not assigned to the Wells Fargo banking policy merely because they appeared in-session.
