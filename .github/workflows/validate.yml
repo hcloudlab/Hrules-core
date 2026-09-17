@@ -39,6 +39,7 @@ jobs:
           from pathlib import Path
           doc = json.loads(Path('build/public-release/manifest.json').read_text())
           assert doc['version'] == 'v0.1.0-rc1'
+          assert doc['channel'] == 'rc'
           artifacts = doc['artifacts']
           skipped = set(doc['skipped_non_publishable_modules'])
           assert artifacts, 'release staging unexpectedly empty'
@@ -48,8 +49,17 @@ jobs:
               path = Path('build/public-release') / item['path']
               assert path.is_file(), path
               assert item['sha256'] and len(item['sha256']) == 64
+          print('EMITTED:', ', '.join(sorted(emitted_modules)))
+          print('WITHHELD:', ', '.join(sorted(skipped)))
           print(f"PASS public publisher: {len(artifacts)} publishable artifacts; {len(skipped)} modules withheld")
           PY
+      - name: Upload validated RC staging artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hrules-public-v0.1.0-rc1
+          path: build/public-release
+          if-no-files-found: error
+          retention-days: 7
       - name: Build pinned Mihomo provider artifacts
         run: python generators/build_mihomo_providers.py --only youtube,cn
       - name: Test Mihomo provider-mode proof config
