@@ -116,6 +116,9 @@ module_bindings:
   telegram: telegram_communication
   coinbase: crypto_account
   bank-of-america: us_banking_account
+  chase: us_banking_account
+  wells-fargo: us_banking_account
+  citi: us_banking_account
   interactive-brokers: brokerage_account
   tradingview: stock_market_data
   private: private_direct
