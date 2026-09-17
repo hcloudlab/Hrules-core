@@ -18,16 +18,16 @@ rules:
     ownership: first_party
     purpose: service_core
     provenance: {kind: first_party, source: official_service, reference: null, observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [official_domain, runtime_observation]}
-    validation: {state: observed, last_tested: "2026-09-16", tests: [web_access]}
+    evidence: {level: corroborated, methods: [official_domain, connection_log]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
     notes: Real Clash Verge traffic observed ndcdyn.interactivebrokers.com and download2.interactivebrokers.com correctly routed through the brokerage policy.
   - id: interactive-brokers.domain-suffix.ibkr-com
     match: {type: domain_suffix, value: ibkr.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: runtime_observation, source: hcloudlab_clash_verge, reference: "t.ibkr.com:443", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [runtime_observation, official_domain]}
-    validation: {state: observed, last_tested: "2026-09-16", tests: [web_access]}
+    provenance: {kind: hcloudlab_observation, source: hcloudlab_clash_verge, reference: "t.ibkr.com:443", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [connection_log, official_domain]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
     notes: Added after real Clash Verge traffic showed t.ibkr.com falling through MATCH instead of the brokerage policy.
