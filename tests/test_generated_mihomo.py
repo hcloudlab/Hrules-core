@@ -36,6 +36,17 @@ def main():
     check("Telegram routed to Telegram group", "DOMAIN-SUFFIX,telegram.org,💬 Telegram [自选]" in rules)
     check("Telegram short links routed to Telegram group", "DOMAIN-SUFFIX,t.me,💬 Telegram [自选]" in rules)
     check("Coinbase routed to crypto group", "DOMAIN-SUFFIX,coinbase.com,💰 虚拟货币 [自选]" in rules)
+
+    banking = "🏦 美国银行 [自选]"
+    check("Bank of America routed to US banking group", f"DOMAIN-SUFFIX,bankofamerica.com,{banking}" in rules)
+    check("Chase routed to US banking group", f"DOMAIN-SUFFIX,chase.com,{banking}" in rules)
+    check("Wells Fargo routed to US banking group", f"DOMAIN-SUFFIX,wellsfargo.com,{banking}" in rules)
+    check("Wells Fargo media candidate routed to US banking group", f"DOMAIN-SUFFIX,wellsfargomedia.com,{banking}" in rules)
+    check("Wells Fargo exact wf.com auth candidate routed to US banking group", f"DOMAIN,connect.secure.wf.com,{banking}" in rules)
+    check("Citi routed to US banking group", f"DOMAIN-SUFFIX,citi.com,{banking}" in rules)
+    check("Capital One routed to US banking group", f"DOMAIN-SUFFIX,capitalone.com,{banking}" in rules)
+    check("American Express routed to US banking group", f"DOMAIN-SUFFIX,americanexpress.com,{banking}" in rules)
+
     check("IBKR routed to stocks group", "DOMAIN-SUFFIX,interactivebrokers.com,📈 美股 [自选]" in rules)
     check("TradingView inherits stocks user choice", "DOMAIN-SUFFIX,tradingview.com,📈 美股 [自选]" in rules)
     check("RFC1918 10/8 routed DIRECT", "IP-CIDR,10.0.0.0/8,DIRECT" in rules)
@@ -50,6 +61,9 @@ def main():
     check("sensitive AI has at least one usable choice", bool(sensitive))
     check("YouTube group exists", "📺 YouTube [自选]" in groups)
     check("Telegram group exists", "💬 Telegram [自选]" in groups)
+    check("US banking group exists", banking in groups)
+    check("US banking excludes cross-region global auto", "♻️ 自动选择 [系统]" not in groups[banking]["proxies"])
+    check("US banking has at least one usable choice", bool(groups[banking]["proxies"]))
 
     print("All generated Mihomo routing assertions passed")
 
