@@ -1,16 +1,18 @@
 schema_version: 1
 version: v0.1
 
-# Profiles describe user-facing scenarios only. Canonical service rules remain single-source.
+# Profiles are user-facing scenarios only. Canonical service rules remain single-source.
+# v0.1 profile membership is intentionally limited to modules with recorded routing
+# acceptance or an equivalent release-candidate gate. Additional services remain in
+# the canonical Full superset until they are ready for scenario publication.
 profiles:
   basic:
     title: Basic
-    description: 日常浏览、YouTube、流媒体与常用海外服务
+    description: 日常浏览与 YouTube
     include:
       - private
       - cn
       - youtube
-      - telegram
 
   ai:
     title: AI
@@ -23,26 +25,23 @@ profiles:
 
   us-finance:
     title: US Finance
-    description: AI + 美国银行 / 美股 / 券商
+    description: AI + 已验证的美国银行 / 券商场景
     extends: [ai]
     include:
       - bank-of-america
       - chase
       - wells-fargo
-      - citi
       - capital-one
       - american-express
       - interactive-brokers
-      - tradingview
 
   crypto:
     title: Crypto
-    description: AI + 主流虚拟货币交易平台
+    description: AI + 已验证的主流虚拟货币交易平台
     extends: [ai]
     include:
       - binance
       - coinbase
-      - okx
       - bybit
       - kraken
 
@@ -54,11 +53,11 @@ profiles:
 
   full:
     title: Full
-    description: Hrules 全场景规则集合，用于高级用户和自定义
+    description: Hrules 全场景规则集合，用于高级用户和自定义；只有通过对应发布门槛的模块才会进入公开构建
     include_all: true
 
 clients:
-  # Availability is intentionally independent from profile definitions.
+  # Availability is independent from profile definitions.
   # A client becomes public only after its generated result passes real-client acceptance.
   mihomo:
     public_names: [Clash Verge, Clash Mi]
