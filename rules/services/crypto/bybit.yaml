@@ -4,9 +4,9 @@ module:
   name: Bybit
   category: crypto
   policy_class: sensitive_account
-  status: research
+  status: validating
   owners: [HCloudLab]
-  description: Research module for Bybit first-party exchange traffic. Account, auth, API and shared dependencies require separate validation.
+  description: Bybit first-party routing module with recorded Clash Verge runtime routing evidence. Authentication-flow validation remains outside the RC gate.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [first_party, dedicated_third_party]
@@ -17,8 +17,8 @@ rules:
     match: {type: domain_suffix, value: bybit.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: first_party, source: official_service, reference: "https://www.bybit.com/", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [official_domain, official_documentation]}
-    validation: {state: untested, last_tested: null, tests: []}
+    provenance: {kind: hcloudlab_observation, source: clash_verge_final_acceptance, reference: "www.bybit.com and ws2.bybit.com routed through the crypto policy", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_domain, official_documentation, connection_log, session_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Core exchange namespace only; auth/API/shared dependencies remain outside until independently validated.
+    notes: Runtime routing identification is accepted for RC publication. This does not claim authentication or account-risk behavior is validated.
