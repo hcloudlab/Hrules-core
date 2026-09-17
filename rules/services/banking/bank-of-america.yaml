@@ -18,7 +18,7 @@ rules:
     ownership: first_party
     purpose: service_core
     provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live sessions observed www/secure/tilt/chat/chatevents/glassbox-hlx-igw/rail/boss/aero/dull and other bankofamerica.com hosts. A dedicated Test 5 configuration routed the namespace through US Banking -> US system group -> Jiuyun US node while shared third-party domains remained on default routing.", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [connection_log, session_observation, ab_routing_test]}
+    evidence: {level: corroborated, methods: [connection_log, session_observation]}
     validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
     notes: Dedicated routing behavior is validated for web access. Authentication flow has not been validated and remains a release gate; therefore this record is intentionally not promoted to verified/passed.
