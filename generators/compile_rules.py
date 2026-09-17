@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Hrules canonical -> logical policy -> client rule compiler prototype.
+"""Hrules canonical -> logical policy -> client rule compiler.
 
-Emits rule artifacts only. Client templates own concrete proxy-group topology.
-Candidate/unvalidated records require --include-research.
+Two publication gates are intentionally distinct:
+- rc: routing-identification evidence suitable for a public release candidate;
+- stable: all module-declared required tests must be completed.
+
+Research/candidate/untested records remain excluded from both gates.
 """
 from __future__ import annotations
 import argparse
@@ -28,10 +31,18 @@ def load_modules(root: Path) -> list[dict]:
     return modules
 
 
-def publishable(module: dict, rule: dict) -> bool:
+def publishable(module: dict, rule: dict, channel: str = "stable") -> bool:
+    """Return whether a canonical matcher may cross the public boundary.
+
+    RC publication proves routing identification, not complete service/account behavior.
+    It requires corroborated-or-better evidence plus at least one successful runtime
+    validation test. Stable publication additionally requires validation=passed and
+    every test declared by the module release policy.
+    """
+    if channel not in {"rc", "stable"}:
+        raise ValueError(f"unknown release channel: {channel}")
     policy = module.get("release_policy", {})
     rank = {"candidate": 0, "corroborated": 1, "verified": 2}
-    minimum = policy.get("minimum_evidence", "verified")
     evidence = rule.get("evidence", {}).get("level", "candidate")
     validation = rule.get("validation", {})
     state = validation.get("state", "untested")
@@ -41,11 +52,23 @@ def publishable(module: dict, rule: dict) -> bool:
     allowed = policy.get("allowed_ownership", [])
     conflicts = rule.get("conflicts", [])
     conflicts_ok = not policy.get("forbid_unresolved_policy_conflicts", False) or not conflicts
+    ownership_ok = not allowed or ownership in allowed
+
+    if channel == "rc":
+        return (
+            rank.get(evidence, -1) >= rank["corroborated"]
+            and state in {"partial", "passed"}
+            and bool(completed_tests)
+            and ownership_ok
+            and conflicts_ok
+        )
+
+    minimum = policy.get("minimum_evidence", "verified")
     return (
         rank.get(evidence, -1) >= rank.get(minimum, 2)
         and state == "passed"
         and required_tests.issubset(completed_tests)
-        and (not allowed or ownership in allowed)
+        and ownership_ok
         and conflicts_ok
     )
 
@@ -72,11 +95,8 @@ def resolve_policy(module_id: str, policy_doc: dict) -> tuple[str, dict]:
 
 
 def target_name(module_id: str, policy_doc: dict) -> str:
-    policy_id, resolved = resolve_policy(module_id, policy_doc)
-    display = resolved["display_name"]
-    if display in {"DIRECT", "REJECT"}:
-        return display
-    return display
+    _, resolved = resolve_policy(module_id, policy_doc)
+    return resolved["display_name"]
 
 
 def mihomo_line(rule: dict, group: str) -> str:
@@ -104,10 +124,10 @@ def singbox_rule(rule: dict, outbound: str) -> dict:
     return {mapping[m["type"]]: [m["value"]], "outbound": action}
 
 
-def compile_module(module: dict, target: str, include_research: bool, policy_doc: dict) -> str:
+def compile_module(module: dict, target: str, include_research: bool, policy_doc: dict, channel: str = "stable") -> str:
     module_id = module["module"]["id"]
     destination = target_name(module_id, policy_doc)
-    selected = [r for r in module["rules"] if include_research or publishable(module, r)]
+    selected = [r for r in module["rules"] if include_research or publishable(module, r, channel)]
     if target == "mihomo":
         return "\n".join(mihomo_line(r, destination) for r in selected) + ("\n" if selected else "")
     if target == "shadowrocket":
@@ -123,6 +143,7 @@ def main() -> int:
     parser.add_argument("--policy", default="policies/v0.1.yaml")
     parser.add_argument("--out", default="build/proof")
     parser.add_argument("--include-research", action="store_true")
+    parser.add_argument("--channel", choices=["rc", "stable"], default="stable")
     parser.add_argument("--target", choices=["all", *TARGETS], default="all")
     args = parser.parse_args()
     policy_doc = load_yaml(Path(args.policy))
@@ -136,7 +157,7 @@ def main() -> int:
             ext = "json" if target == "sing-box" else "list"
             path = out_root / target / f"{module_id}.{ext}"
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(compile_module(module, target, args.include_research, policy_doc), encoding="utf-8")
+            path.write_text(compile_module(module, target, args.include_research, policy_doc, args.channel), encoding="utf-8")
             print(f"WROTE {path}")
             count += 1
     print(f"Generated {count} artifact(s) from {len(modules)} module(s)")
