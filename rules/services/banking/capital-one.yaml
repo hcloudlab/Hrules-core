@@ -4,9 +4,9 @@ module:
   name: Capital One
   category: banking
   policy_class: sensitive_account
-  status: research
+  status: validating
   owners: [HCloudLab]
-  description: Research module for Capital One first-party banking traffic based on official Capital One web properties. Runtime validation through Hrules remains pending.
+  description: Capital One first-party routing module with recorded Clash Verge runtime routing evidence. Authentication-flow validation remains outside the RC gate.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [first_party, dedicated_third_party]
@@ -17,8 +17,8 @@ rules:
     match: {type: domain_suffix, value: capitalone.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: first_party, source: official_service, reference: "Capital One official banking and account-access pages on capitalone.com", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [official_domain, manual_review]}
-    validation: {state: untested, last_tested: null, tests: []}
+    provenance: {kind: hcloudlab_observation, source: clash_verge_final_acceptance, reference: "capitalone.com routed through the dedicated banking policy", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_domain, connection_log, session_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Official first-party namespace. Keep in research until web and authentication flows are validated through the dedicated Hrules banking policy.
+    notes: Runtime routing identification is accepted for RC publication. This does not claim authentication or account-risk behavior is validated.
