@@ -4,9 +4,9 @@ module:
   name: Coinbase
   category: crypto
   policy_class: sensitive_account
-  status: research
+  status: validating
   owners: [HCloudLab]
-  description: Proof fixture demonstrating exchange identity remains separate from general crypto information traffic.
+  description: Coinbase first-party routing module with recorded Clash Verge runtime routing evidence. Authentication-flow validation remains outside the RC gate.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [first_party, dedicated_third_party]
@@ -17,8 +17,8 @@ rules:
     match: {type: domain_suffix, value: coinbase.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: first_party, source: official_service, reference: null, observed_at: null}
-    evidence: {level: candidate, methods: [official_domain]}
-    validation: {state: untested, last_tested: null, tests: []}
+    provenance: {kind: hcloudlab_observation, source: clash_verge_final_acceptance, reference: "login.coinbase.com routed through the crypto policy", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_domain, connection_log, session_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Seed fixture only; wallet, auth, API and shared dependencies require separate review.
+    notes: Runtime routing identification is accepted for RC publication. This does not claim authentication or account-risk behavior is validated.
