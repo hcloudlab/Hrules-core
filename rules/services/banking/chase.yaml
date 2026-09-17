@@ -1,0 +1,26 @@
+schema_version: 1
+module:
+  id: chase
+  name: Chase
+  category: banking
+  policy_class: sensitive_account
+  status: research
+  owners: [HCloudLab]
+  description: Research module for Chase first-party traffic observed during a real web session. Shared third-party dependencies remain excluded pending validation.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, auth_flow]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: chase.domain-suffix.chase-com
+    match: {type: domain_suffix, value: chase.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: hcloudlab_observation, source: clash_verge_live_test, reference: "Live Chase web session observed measure.chase.com, analytics.chase.com, chase-ipma-lucy.chase.com, static.chase.com, and securej.chase.com under the chase.com namespace", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [connection_log, session_observation]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: First-party Chase namespace observed during a real session. Authentication flow through the dedicated Hrules banking policy remains to be validated before release.
+
+# Shared third-party traffic observed in the same browsing period is deliberately excluded.
