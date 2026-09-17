@@ -31,7 +31,7 @@ jobs:
         run: python tests/test_metacubex_adapter.py
       - name: Exercise fail-closed public publisher
         run: |
-          python generators/publish_public.py --allow-empty --out build/public-release
+          python generators/publish_public.py --out build/public-release
           test -f build/public-release/manifest.json
           test -f build/public-release/SHA256SUMS
           python - <<'PY'
@@ -39,11 +39,16 @@ jobs:
           from pathlib import Path
           doc = json.loads(Path('build/public-release/manifest.json').read_text())
           assert doc['version'] == 'v0.1.0-rc1'
-          # Until records are explicitly promoted to the public release policy,
-          # CI must not leak research/partial rules into public artifacts.
-          assert doc['artifacts'] == [], doc['artifacts']
-          assert doc['skipped_non_publishable_modules']
-          print('PASS public publisher remains fail-closed for RC1')
+          artifacts = doc['artifacts']
+          skipped = set(doc['skipped_non_publishable_modules'])
+          assert artifacts, 'release staging unexpectedly empty'
+          emitted_modules = {item['module'] for item in artifacts}
+          assert not (emitted_modules & skipped), (emitted_modules & skipped)
+          for item in artifacts:
+              path = Path('build/public-release') / item['path']
+              assert path.is_file(), path
+              assert item['sha256'] and len(item['sha256']) == 64
+          print(f"PASS public publisher: {len(artifacts)} publishable artifacts; {len(skipped)} modules withheld")
           PY
       - name: Build pinned Mihomo provider artifacts
         run: python generators/build_mihomo_providers.py --only youtube,cn
