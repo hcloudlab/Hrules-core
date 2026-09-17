@@ -26,8 +26,8 @@ rules:
     match: {type: domain_suffix, value: binance.us}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: runtime_observation, source: hcloudlab_clash_verge, reference: "stream.binance.us:9443", observed_at: "2026-09-16"}
-    evidence: {level: corroborated, methods: [runtime_observation, official_domain]}
-    validation: {state: observed, last_tested: "2026-09-16", tests: [web_access]}
+    provenance: {kind: hcloudlab_observation, source: hcloudlab_clash_verge, reference: "stream.binance.us:9443", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [connection_log, official_domain]}
+    validation: {state: partial, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
     notes: Added after real Clash Verge traffic showed stream.binance.us falling through MATCH instead of the crypto policy.
