@@ -59,7 +59,9 @@ def main():
     check("temporary HRULES namespace removed", "HRULES::" not in proof)
 
     released = module(evidence="verified", state="passed")
-    check("verified passed record is publishable", compiler.publishable(released, released["rules"][0]))
+    rule = released["rules"][0]
+    check("verified passed record is publishable", compiler.publishable(released, rule))
+    check("mihomo provider matcher is policy-free", compiler.mihomo_matcher(rule) == "DOMAIN-SUFFIX,example.com")
     check("mihomo policy lowering", compiler.compile_module(released, "mihomo", False, policy).startswith("DOMAIN-SUFFIX,example.com,Example Group"))
     check("shadowrocket policy lowering", compiler.compile_module(released, "shadowrocket", False, policy).startswith("DOMAIN-SUFFIX,example.com,Example Group"))
     sb = compiler.compile_module(released, "sing-box", False, policy)
