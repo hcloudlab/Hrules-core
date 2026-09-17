@@ -119,6 +119,8 @@ module_bindings:
   chase: us_banking_account
   wells-fargo: us_banking_account
   citi: us_banking_account
+  capital-one: us_banking_account
+  american-express: us_banking_account
   interactive-brokers: brokerage_account
   tradingview: stock_market_data
   private: private_direct
