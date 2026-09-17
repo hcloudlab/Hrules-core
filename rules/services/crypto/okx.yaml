@@ -1,0 +1,24 @@
+schema_version: 1
+module:
+  id: okx
+  name: OKX
+  category: crypto
+  policy_class: sensitive_account
+  status: research
+  owners: [HCloudLab]
+  description: Research module for OKX first-party exchange traffic. Account, auth, API and shared dependencies require separate validation.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [first_party, dedicated_third_party]
+  required_tests: [web_access, auth_flow]
+  forbid_unresolved_policy_conflicts: true
+rules:
+  - id: okx.domain-suffix.okx-com
+    match: {type: domain_suffix, value: okx.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: first_party, source: official_service, reference: "https://www.okx.com/", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_domain]}
+    validation: {state: untested, last_tested: null, tests: []}
+    conflicts: []
+    notes: Core exchange namespace only; auth/API/shared dependencies remain outside until independently validated.
