@@ -1,0 +1,75 @@
+schema_version: 1
+release:
+  version: v0.1.0-rc1
+  status: release_candidate
+  created_at: "2026-09-16"
+  source_repository: hcloudlab/Hrules-core
+  public_repository: hcloudlab/Hrules
+  acceptance_record: docs/validation/final-acceptance-2026-09-16.md
+
+scope:
+  clients:
+    - mihomo
+  routing_classes:
+    - sensitive_ai
+    - general_ai
+    - youtube_media
+    - telegram_communication
+    - crypto_account
+    - us_banking_account
+    - brokerage_account
+    - stock_market_data
+    - private_direct
+    - cn_direct
+    - default_proxy
+
+validated_runtime_examples:
+  sensitive_ai:
+    - chatgpt.com
+  crypto_account:
+    - coinbase.com
+    - bybit.com
+    - kraken.com
+  us_banking_account:
+    - bankofamerica.com
+    - americanexpress.com
+    - capitalone.com
+    - connect.secure.wf.com
+  brokerage_account:
+    - interactivebrokers.com
+  youtube_media:
+    - youtube.com
+  cn_direct:
+    - representative CN service traffic via hrules-cn
+
+acceptance_corrections:
+  - domain: binance.us
+    policy: crypto_account
+    evidence: runtime_miss_then_offline_regression
+  - domain: ibkr.com
+    policy: brokerage_account
+    evidence: runtime_miss_then_offline_regression
+
+release_gates:
+  canonical_schema: required
+  policy_mapping: required
+  conflict_detection: required
+  semantic_tests: required
+  compiler_contract_tests: required
+  provider_tests: required
+  topology_tests: required
+  generated_routing_assertions: required
+  mihomo_syntax_validation: required
+  runtime_acceptance_record: required
+
+publication_policy:
+  upstream_changes_publish_directly: false
+  publish_only_after_green_ci: true
+  include_versioned_artifacts: true
+  include_sha256: true
+  preserve_attribution_and_license_metadata: true
+
+notes:
+  - Sensitive routing controls egress selection; it does not claim to prevent service-side account risk or fraud controls.
+  - Shared third-party domains are not assigned to sensitive service modules solely because they appear during a session.
+  - Shadowrocket and sing-box/SFM remain initial targets but are not part of this v0.1 Mihomo release candidate gate.
