@@ -1,0 +1,77 @@
+schema_version: 1
+version: v0.1
+
+# Profiles describe user-facing scenarios only. Canonical service rules remain single-source.
+profiles:
+  basic:
+    title: Basic
+    description: 日常浏览、YouTube、流媒体与常用海外服务
+    include:
+      - private
+      - cn
+      - youtube
+      - telegram
+
+  ai:
+    title: AI
+    description: Basic + Claude / ChatGPT / Gemini
+    extends: [basic]
+    include:
+      - claude
+      - openai
+      - gemini
+
+  us-finance:
+    title: US Finance
+    description: AI + 美国银行 / 美股 / 券商
+    extends: [ai]
+    include:
+      - bank-of-america
+      - chase
+      - wells-fargo
+      - citi
+      - capital-one
+      - american-express
+      - interactive-brokers
+      - tradingview
+
+  crypto:
+    title: Crypto
+    description: AI + 主流虚拟货币交易平台
+    extends: [ai]
+    include:
+      - binance
+      - coinbase
+      - okx
+      - bybit
+      - kraken
+
+  finance-pro:
+    title: Finance Pro
+    description: AI + 美国金融 + Crypto
+    extends: [us-finance, crypto]
+    include: []
+
+  full:
+    title: Full
+    description: Hrules 全场景规则集合，用于高级用户和自定义
+    include_all: true
+
+clients:
+  # Availability is intentionally independent from profile definitions.
+  # A client becomes public only after its generated result passes real-client acceptance.
+  mihomo:
+    public_names: [Clash Verge, Clash Mi]
+    status: validating
+  shadowrocket:
+    public_names: [Shadowrocket]
+    status: planned
+  sing-box:
+    public_names: [SFM, sing-box]
+    status: planned
+  v2rayn:
+    public_names: [v2rayN]
+    status: planned
+  karing:
+    public_names: [Karing]
+    status: planned
