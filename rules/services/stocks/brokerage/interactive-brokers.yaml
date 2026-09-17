@@ -6,7 +6,7 @@ module:
   policy_class: sensitive_account
   status: research
   owners: [HCloudLab]
-  description: Proof fixture for brokerage/account traffic; not a complete IBKR ruleset.
+  description: Research module for Interactive Brokers brokerage/account traffic; still intentionally limited to first-party namespaces with direct evidence.
 release_policy:
   minimum_evidence: verified
   allowed_ownership: [first_party, dedicated_third_party]
@@ -17,8 +17,17 @@ rules:
     match: {type: domain_suffix, value: interactivebrokers.com}
     ownership: first_party
     purpose: service_core
-    provenance: {kind: first_party, source: official_service, reference: null, observed_at: null}
-    evidence: {level: candidate, methods: [official_domain]}
-    validation: {state: untested, last_tested: null, tests: []}
+    provenance: {kind: first_party, source: official_service, reference: null, observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [official_domain, runtime_observation]}
+    validation: {state: observed, last_tested: "2026-09-16", tests: [web_access]}
     conflicts: []
-    notes: Seed fixture; account/auth/API/trading dependencies require HCloudLab validation.
+    notes: Real Clash Verge traffic observed ndcdyn.interactivebrokers.com and download2.interactivebrokers.com correctly routed through the brokerage policy.
+  - id: interactive-brokers.domain-suffix.ibkr-com
+    match: {type: domain_suffix, value: ibkr.com}
+    ownership: first_party
+    purpose: service_core
+    provenance: {kind: runtime_observation, source: hcloudlab_clash_verge, reference: "t.ibkr.com:443", observed_at: "2026-09-16"}
+    evidence: {level: corroborated, methods: [runtime_observation, official_domain]}
+    validation: {state: observed, last_tested: "2026-09-16", tests: [web_access]}
+    conflicts: []
+    notes: Added after real Clash Verge traffic showed t.ibkr.com falling through MATCH instead of the brokerage policy.
