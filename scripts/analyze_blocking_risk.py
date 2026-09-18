@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 """Deterministic risk triage for review-only Blocking candidates."""
 from __future__ import annotations
-import argparse, json, hashlib
+import argparse, json, hashlib, ipaddress
 from collections import Counter, defaultdict
 from pathlib import Path
 
-MULTI_LABEL_SUFFIXES={"co.uk","com.cn","net.cn","org.cn","com.au","co.jp","com.hk","com.tw"}
+FALLBACK_MULTI_LABEL_SUFFIXES={"co.uk","com.cn","net.cn","org.cn","com.au","co.jp","com.hk","com.tw"}
+try:
+    from publicsuffix2 import get_sld
+except ImportError:
+    get_sld=None
 
 def root_domain(value:str)->str:
-    parts=value.lower().strip(".").split(".")
-    if len(parts)<=2: return ".".join(parts)
+    value=value.lower().strip(".")
+    if get_sld:
+        result=get_sld(value, strict=True)
+        if result: return result
+    parts=value.split(".")
+    if len(parts)<=2: return value
     tail=".".join(parts[-2:])
-    if tail in MULTI_LABEL_SUFFIXES and len(parts)>=3: return ".".join(parts[-3:])
+    if tail in FALLBACK_MULTI_LABEL_SUFFIXES and len(parts)>=3: return ".".join(parts[-3:])
     return tail
 
 def stable_rank(cid:str)->str: return hashlib.sha256(cid.encode()).hexdigest()
