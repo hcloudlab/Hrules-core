@@ -10,7 +10,7 @@ def main()->int:
     p=argparse.ArgumentParser()
     p.add_argument("--candidates",required=True); p.add_argument("--risk",required=True); p.add_argument("--out",required=True)
     p.add_argument("--tier",choices=["low","medium","high"],default="low"); p.add_argument("--limit",type=int,default=100)
-    p.add_argument("--max-root-concentration",type=int,default=10); p.add_argument("--require-multi-source",action="store_true")
+    p.add_argument("--max-root-concentration",type=int,default=10); p.add_argument("--require-multi-source",action="store_true"); p.add_argument("--require-exact-lowering",action="store_true")
     a=p.parse_args()
     cand=json.loads(Path(a.candidates).read_text()).get("candidates",[])
     risk=json.loads(Path(a.risk).read_text())
@@ -21,12 +21,12 @@ def main()->int:
     for x in annotated:
         if x.get("risk",{}).get("tier") != a.tier: continue
         if x.get("root_concentration",10**9)>a.max_root_concentration: continue
-        if a.require_multi_source and x.get("source_count",1)<2: continue
+        if a.require_multi_source and x.get("source_count",1)<2: continue\n        if a.require_exact_lowering and x.get("semantic_lowering")!="EXACT": continue
         eligible.append(x)
     eligible=sorted(eligible,key=lambda x:rank(x["id"]))[:a.limit]
     out={"schema_version":1,"status":"review_batch_only","policy":{
       "tier":a.tier,"limit":a.limit,"max_root_concentration":a.max_root_concentration,
-      "require_multi_source":a.require_multi_source},"selected":eligible}
+      "require_multi_source":a.require_multi_source,"require_exact_lowering":a.require_exact_lowering},"selected":eligible}
     Path(a.out).parent.mkdir(parents=True,exist_ok=True); Path(a.out).write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n")
     print(f"REVIEW BATCH ONLY selected={len(eligible)} tier={a.tier}")
     return 0
