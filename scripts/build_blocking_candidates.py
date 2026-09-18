@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Build a review-only Blocking candidate set from guarded upstream snapshots."""
 from __future__ import annotations
-import argparse, hashlib, json
+import argparse, hashlib, json, sys
 from collections import defaultdict
 from pathlib import Path
 import yaml
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 from scripts.normalize_abp import normalize
 
 def sha(path: Path)->str: return hashlib.sha256(path.read_bytes()).hexdigest()
