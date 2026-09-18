@@ -1,0 +1,6 @@
+schema_version: 1
+status: research
+
+# Explicit protection list for domains that must never enter Blocking automatically.
+# Empty by default. Entries require a reason and evidence before use.
+entries: []
