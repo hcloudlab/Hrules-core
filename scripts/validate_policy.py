@@ -43,6 +43,7 @@ def main() -> int:
     modules = canonical_modules(Path(args.rules))
     logical = policy["logical_policies"]
     bindings = policy["module_bindings"]
+    stages = policy["routing_stages"]
     failures = 0
 
     for module_id, target in bindings.items():
@@ -54,6 +55,10 @@ def main() -> int:
             failures += 1
 
     for policy_id, item in logical.items():
+        stage = item.get("routing_stage")
+        if stage not in stages:
+            print(f"FAIL {policy_id} references unknown routing stage: {stage}")
+            failures += 1
         parent = item.get("inherit_user_choice_from")
         if parent and parent not in logical:
             print(f"FAIL {policy_id} inherits unknown policy: {parent}")
