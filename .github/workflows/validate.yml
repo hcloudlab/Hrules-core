@@ -39,6 +39,8 @@ jobs:
         run: python tests/test_blocking_ingestion.py
       - name: Run Blocking review gate tests
         run: python tests/test_blocking_review_gate.py
+      - name: Run Blocking promotion contract tests
+        run: python tests/test_blocking_promotion.py
       - name: Run compiler contract tests
         run: python tests/test_compiler.py
       - name: Run profile contract tests
