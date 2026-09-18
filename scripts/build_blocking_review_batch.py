@@ -21,7 +21,8 @@ def main()->int:
     for x in annotated:
         if x.get("risk",{}).get("tier") != a.tier: continue
         if x.get("root_concentration",10**9)>a.max_root_concentration: continue
-        if a.require_multi_source and x.get("source_count",1)<2: continue\n        if a.require_exact_lowering and x.get("semantic_lowering")!="EXACT": continue
+        if a.require_multi_source and x.get("source_count",1)<2: continue
+        if a.require_exact_lowering and x.get("semantic_lowering")!="EXACT": continue
         eligible.append(x)
     eligible=sorted(eligible,key=lambda x:rank(x["id"]))[:a.limit]
     out={"schema_version":1,"status":"review_batch_only","policy":{
