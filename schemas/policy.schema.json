@@ -3,43 +3,120 @@
   "title": "Hrules Logical Policy Mapping",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "policy_version", "status", "logical_policies", "module_bindings"],
+  "required": [
+    "schema_version",
+    "policy_version",
+    "status",
+    "routing_stages",
+    "logical_policies",
+    "module_bindings"
+  ],
   "properties": {
-    "schema_version": {"const": 1},
-    "policy_version": {"type": "string", "pattern": "^v[0-9]+\\.[0-9]+$"},
-    "status": {"enum": ["research", "design_baseline", "release_candidate", "published", "deprecated"]},
+    "schema_version": {
+      "const": 1
+    },
+    "policy_version": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+$"
+    },
+    "status": {
+      "enum": [
+        "research",
+        "design_baseline",
+        "release_candidate",
+        "published",
+        "deprecated"
+      ]
+    },
     "logical_policies": {
       "type": "object",
       "minProperties": 1,
-      "additionalProperties": {"$ref": "#/$defs/policy"}
+      "additionalProperties": {
+        "$ref": "#/$defs/policy"
+      }
     },
     "module_bindings": {
       "type": "object",
-      "additionalProperties": {"type": "string", "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"}
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"
+      }
+    },
+    "routing_stages": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
     }
   },
   "$defs": {
     "policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["display_name", "behavior", "user_visible"],
+      "required": [
+        "display_name",
+        "routing_stage",
+        "behavior",
+        "user_visible"
+      ],
       "properties": {
-        "display_name": {"type": "string", "minLength": 1},
-        "behavior": {"enum": ["ordinary_proxy", "region_preferred", "sensitive_account", "direct_preferred", "reject", "informational"]},
-        "user_visible": {"type": "boolean"},
-        "inherit_user_choice_from": {"type": "string", "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"},
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "behavior": {
+          "enum": [
+            "ordinary_proxy",
+            "region_preferred",
+            "sensitive_account",
+            "direct_preferred",
+            "reject",
+            "informational"
+          ]
+        },
+        "user_visible": {
+          "type": "boolean"
+        },
+        "inherit_user_choice_from": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"
+        },
         "egress_requirements": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "prioritize_consistency": {"type": "boolean"},
-            "require_static_ip": {"type": "boolean"},
-            "require_residential_or_isp": {"type": "boolean"},
-            "force_country": {"type": ["string", "null"]},
-            "allow_region_internal_auto_selection": {"type": "boolean"}
+            "prioritize_consistency": {
+              "type": "boolean"
+            },
+            "require_static_ip": {
+              "type": "boolean"
+            },
+            "require_residential_or_isp": {
+              "type": "boolean"
+            },
+            "force_country": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "allow_region_internal_auto_selection": {
+              "type": "boolean"
+            }
           }
         },
-        "notes": {"type": "array", "items": {"type": "string"}}
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "routing_stage": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"
+        }
       }
     }
   }
