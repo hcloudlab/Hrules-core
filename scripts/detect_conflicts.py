@@ -44,11 +44,13 @@ def load_entries(root: Path) -> list[Entry]:
         module = doc.get("module", {})
         module_id = module.get("id", "<unknown>")
         policy = module.get("policy_class", "<unknown>")
+        exclusions = doc.get("exclusions", [])
         for rule in doc.get("rules", []):
+            if compiler.exclusion_action(rule, exclusions) == "skip":
+                continue
             match = rule.get("match", {})
             entries.append(Entry(module_id, policy, rule.get("id", "<unknown>"), match.get("type", ""), str(match.get("value", "")), path))
     return entries
-
 
 def domain_overlap(a: Entry, b: Entry) -> bool:
     domain_types = {"domain", "domain_suffix"}
