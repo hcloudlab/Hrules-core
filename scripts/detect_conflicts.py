@@ -14,7 +14,14 @@ from pathlib import Path
 
 import yaml
 
-from generators import compile_rules as compiler
+import importlib.util
+
+ROOT = Path(__file__).resolve().parents[1]
+COMPILER_PATH = ROOT / "generators" / "compile_rules.py"
+spec = importlib.util.spec_from_file_location("compile_rules_for_conflicts", COMPILER_PATH)
+compiler = importlib.util.module_from_spec(spec)
+assert spec and spec.loader
+spec.loader.exec_module(compiler)
 
 
 @dataclass(frozen=True)
