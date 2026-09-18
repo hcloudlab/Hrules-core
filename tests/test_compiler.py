@@ -14,14 +14,17 @@ spec.loader.exec_module(compiler)
 
 def policy_doc():
     return {
+        "routing_stages": {"private": 10, "ordinary_service": 40},
         "logical_policies": {
             "example_policy": {
                 "display_name": "Example Group",
+                "routing_stage": "ordinary_service",
                 "behavior": "ordinary_proxy",
                 "user_visible": True,
             },
             "private_direct": {
                 "display_name": "DIRECT",
+                "routing_stage": "private",
                 "behavior": "direct_preferred",
                 "user_visible": False,
             },
@@ -57,6 +60,26 @@ def main():
     proof = compiler.compile_module(research, "mihomo", True, policy)
     check("research can be proof-compiled", "DOMAIN-SUFFIX,example.com,Example Group" in proof)
     check("temporary HRULES namespace removed", "HRULES::" not in proof)
+
+    private_for_order = module(module_id="private", match_type="ip_cidr", value="10.0.0.0/8")
+    ordered = compiler.order_modules([research, private_for_order], policy)
+    check("semantic routing stage beats input/path order", [m["module"]["id"] for m in ordered] == ["private", "example"])
+
+    excluded = module()
+    excluded["exclusions"] = [{"match": {"type": "domain_suffix", "value": "example.com"}, "reason": "test"}]
+    check("exact exclusion suppresses matcher", compiler.compile_module(excluded, "mihomo", True, policy) == "")
+
+    subtractive = module(value="example.com")
+    subtractive["exclusions"] = [{"match": {"type": "domain", "value": "login.example.com"}, "reason": "shared"}]
+    try:
+        compiler.compile_module(subtractive, "mihomo", True, policy)
+    except ValueError as exc:
+        check("narrow exclusion fails closed", "subtractive lowering unsupported" in str(exc))
+    else:
+        raise AssertionError("narrow exclusion must fail closed")
+
+    check("Shadowrocket process_path declared unsupported", compiler.lowering_status("shadowrocket", "process_path") == "UNSUPPORTED")
+    check("Mihomo domain suffix lowering exact", compiler.lowering_status("mihomo", "domain_suffix") == "EXACT")
 
     released = module(evidence="verified", state="passed")
     rule = released["rules"][0]
