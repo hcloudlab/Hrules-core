@@ -44,6 +44,77 @@ sources:
       - Useful for historical and service-specific comparison.
       - Share-alike implications require explicit review before derived publication.
 
+
+  johnshall_shadowrocket_adblock_rules_forever:
+    repository: Johnshall/Shadowrocket-ADBlock-Rules-Forever
+    role: aggregation_design_reference
+    license: review_required
+    candidate_categories: [gfw-routing, adblock, shadowrocket-config, client-behavior]
+    notes:
+      - Use as an aggregation/design reference rather than as Hrules canonical data.
+      - Its documented upstream families include GFWList, GreatFire-derived observations, EasyList China, xinggsf/Adblock-Plus-Rule, Peter Lowe, blackmatrix7/ios_rule_script and LOWERTOP/Shadowrocket.
+      - Prefer original upstream sources where practical instead of consuming transformed Shadowrocket output.
+      - Manual service/app rules may be researched individually, but provenance and reuse review are required before derivation or redistribution.
+
+  gfwlist:
+    repository: gfwlist/gfwlist
+    role: routing_candidate
+    license: review_required
+    candidate_categories: [proxy, blocked-domains]
+    notes:
+      - Prefer parsing the original upstream format into canonical domain matchers.
+      - Do not equate membership with a permanent universal routing requirement; policy remains profile-specific.
+
+  greatfire:
+    repository: null
+    website: https://en.greatfire.org/analyzer
+    role: corroboration_research
+    license: review_required
+    candidate_categories: [blocked-domain-evidence]
+    notes:
+      - Use as corroborating evidence for reachability/censorship observations.
+      - Do not publish scraped or derived data without explicit provenance and reuse review.
+
+  easylist_china:
+    repository: easylist/easylistchina
+    role: blocking_candidate
+    license: review_required
+    candidate_categories: [ads, tracking]
+    notes:
+      - Adblock syntax contains cosmetic and request-type constructs that may not map to proxy routing engines.
+      - Only safely representable domain/URL matchers may enter canonical blocking modules.
+
+  xinggsf_adblock_plus_rule:
+    repository: xinggsf/Adblock-Plus-Rule
+    role: blocking_research_candidate
+    license: review_required
+    candidate_categories: [ads, tracking, chinese-app-web]
+    notes:
+      - Strong Chinese advertising coverage.
+      - Ignore cosmetic filters, scriptlets and unsupported ABP/uBO operators unless a target adapter can represent their semantics exactly.
+      - Do not silently degrade complex filters into broad domain rejects.
+
+  peter_lowe_blocklist:
+    repository: null
+    website: https://pgl.yoyo.org/adservers/
+    role: domain_blocking_candidate
+    license: review_required
+    candidate_categories: [ads, trackers, malware, anti-adblock]
+    notes:
+      - Domain-oriented source with explicit inclusion policy and multiple machine-readable formats.
+      - Suitable for domain-level blocking candidates after provenance and reuse review.
+      - Keep category semantics explicit: the list is broader than advertising alone.
+
+  lowertop_shadowrocket:
+    repository: LOWERTOP/Shadowrocket
+    role: client_behavior_reference
+    license: review_required
+    candidate_categories: [shadowrocket-config, shadowrocket-runtime]
+    notes:
+      - Use to study Shadowrocket configuration structure and practical behavior.
+      - Do not make Shadowrocket-specific configuration the Hrules canonical model.
+
+
 policy_modules:
   claude:
     target_group: "🔐 Claude / OpenAI [自选]"
