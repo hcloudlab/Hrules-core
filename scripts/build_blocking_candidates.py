@@ -10,6 +10,8 @@ sys.path.insert(0,str(ROOT))
 from scripts.normalize_abp import normalize
 
 def sha(path: Path)->str: return hashlib.sha256(path.read_bytes()).hexdigest()
+def candidate_id(match_type: str, value: str)->str:
+    return "blk-" + hashlib.sha256(f"{match_type}:{value}".encode()).hexdigest()[:16]
 
 def domain_relation(a: tuple[str,str], b: tuple[str,str]) -> str | None:
     at,av=a[0],a[1].lower(); bt,bv=b[0],b[1].lower()
@@ -51,7 +53,7 @@ def main()->int:
         source_meta.append({"id":sid,"path":str(path),"sha256":sha(path),"accepted":len(accepted),"rejected":len(rej),"reject_ratio":ratio})
     existing=existing_matchers(Path(a.rules)); allowlist=load_allowlist(Path(a.allowlist)); candidates=[]; conflicts=[]; allowlisted=[]
     for key,sources in sorted(provenance.items()):
-        rec={"match":{"type":key[0],"value":key[1]},"sources":sorted(set(sources)),"source_count":len(set(sources))}
+        rec={"id":candidate_id(key[0],key[1]),"match":{"type":key[0],"value":key[1]},"sources":sorted(set(sources)),"source_count":len(set(sources))}
         protected=False
         for item in allowlist:
             m=item.get("match",{}); rel=domain_relation(key,(m.get("type"),str(m.get("value","")).lower()))
