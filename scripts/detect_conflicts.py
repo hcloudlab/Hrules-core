@@ -14,6 +14,8 @@ from pathlib import Path
 
 import yaml
 
+from generators import compile_rules as compiler
+
 
 @dataclass(frozen=True)
 class Entry:
