@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hrules Blocking Review Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "decision", "reviewer", "reviewed_at", "checks", "reason"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "candidate_id": {"type": "string", "pattern": "^blk-[a-f0-9]{16}$"},
+    "decision": {"enum": ["block", "allow", "hold"]},
+    "reviewer": {"type": "string", "minLength": 1},
+    "reviewed_at": {"type": "string", "format": "date"},
+    "expires": {"type": ["string", "null"], "format": "date"},
+    "reason": {"type": "string", "minLength": 1},
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["service_overlap_reviewed", "root_domain_reviewed", "false_positive_reviewed"],
+      "properties": {
+        "service_overlap_reviewed": {"const": true},
+        "root_domain_reviewed": {"const": true},
+        "false_positive_reviewed": {"const": true}
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "default": []
+    }
+  }
+}
