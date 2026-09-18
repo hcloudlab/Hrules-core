@@ -75,7 +75,7 @@ def main() -> int:
     emitted_modules: set[str] = set()
 
     for module_id, module in sorted(modules_by_id.items()):
-        selected = [rule for rule in module["rules"] if compiler.publishable(module, rule, channel)]
+        selected = [rule for rule in module["rules"] if compiler.publishable(module, rule, channel)]\n        selected = [rule for rule in selected if compiler.exclusion_action(rule, module.get("exclusions", [])) == "keep"]
         if not selected:
             skipped.append(module_id)
             continue
