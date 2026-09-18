@@ -104,7 +104,11 @@ def resolve_policy(module_id: str, policy_doc: dict) -> tuple[str, dict]:
 
 def routing_stage(module: dict, policy_doc: dict) -> tuple[int, str]:
     module_id = module["module"]["id"]
-    _, policy = resolve_policy(module_id, policy_doc)
+    bindings = policy_doc["module_bindings"]
+    logical = policy_doc["logical_policies"]
+    if module_id not in bindings or bindings[module_id] not in logical:
+        raise ValueError(f"module has no policy binding: {module_id}")
+    policy = logical[bindings[module_id]]
     stage = policy.get("routing_stage")
     stages = policy_doc.get("routing_stages", {})
     if not stage or stage not in stages:
