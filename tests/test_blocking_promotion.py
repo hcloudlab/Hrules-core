@@ -20,5 +20,6 @@ def main():
         check("corroborated source evidence preserved",r["evidence"]["level"]=="corroborated")
         check("review does not claim routing validation",r["validation"]["state"]=="partial" and r["validation"]["tests"]==["false_positive_review"])
         check("stable candidate ID becomes canonical rule ID",r["id"]=="blk-1111111111111111")
+        check("promotion does not invent ownership or purpose",r["ownership"]=="unknown" and r["purpose"]=="unknown")
     print("All Blocking promotion tests passed")
 if __name__=="__main__": main()
