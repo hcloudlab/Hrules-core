@@ -41,6 +41,18 @@ jobs:
         run: python tests/test_blocking_review_gate.py
       - name: Run Blocking promotion contract tests
         run: python tests/test_blocking_promotion.py
+      - name: Run real Blocking upstream dry-run
+        run: python scripts/run_blocking_dry_run.py
+      - name: Assert dry-run remains non-canonical
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          doc=json.loads(Path('build/blocking-dry-run/candidates.json').read_text())
+          assert doc['status']=='review_only'
+          assert Path('build/blocking-dry-run/summary.json').is_file()
+          print(Path('build/blocking-dry-run/summary.json').read_text())
+          PY
       - name: Run compiler contract tests
         run: python tests/test_compiler.py
       - name: Run profile contract tests
