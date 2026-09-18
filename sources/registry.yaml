@@ -47,7 +47,7 @@ sources:
   easylist_china:
     repository: easylist/easylistchina
     role: blocking_candidate
-    license: GPL-3.0
+    license: review_required
     candidate_categories: [blocking]
     ingestion:
       parser: strict_abp_domain
@@ -69,20 +69,6 @@ sources:
     notes:
       - Candidate for cross-checking Chinese advertising/tracker coverage.
       - License and redistribution terms must be cleared before derived publication.
-
-  peter_lowe_list:
-    repository: peter-lowe/adservers
-    role: blocking_research_candidate
-    license: review_required
-    candidate_categories: [blocking]
-    ingestion:
-      parser: strict_abp_domain
-      anomaly_guard: required
-      redistribution_review: required
-    notes:
-      - Use as independent corroboration, not an automatic merge source.
-      - Exact upstream artifact and reuse terms must be pinned before ingestion.
-
 
 policy_modules:
   claude:
