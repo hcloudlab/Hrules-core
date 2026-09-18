@@ -41,6 +41,8 @@ jobs:
         run: python tests/test_blocking_review_gate.py
       - name: Run Blocking promotion contract tests
         run: python tests/test_blocking_promotion.py
+      - name: Run Blocking classification gate tests
+        run: python tests/test_blocking_classification_gate.py
       - name: Run Blocking risk triage tests
         run: python tests/test_blocking_risk.py
       - name: Run bounded Blocking review batch tests
