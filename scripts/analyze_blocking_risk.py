@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Deterministic risk triage for review-only Blocking candidates."""
 from __future__ import annotations
-import argparse, json, hashlib, ipaddress
+import argparse, json, hashlib
 from collections import Counter, defaultdict
 from pathlib import Path
 
