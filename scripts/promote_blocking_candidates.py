@@ -24,13 +24,13 @@ def main()->int:
         rules.append({
           "id": item["id"],
           "match": item["match"],
-          "ownership": "dedicated_third_party",
-          "purpose": "advertising",
+          "ownership": "unknown",
+          "purpose": "unknown",
           "provenance": {"kind":"upstream","source":",".join(sorted(set(sources))),"reference":item["id"],"observed_at":review["reviewed_at"]},
           "evidence": {"level":level,"methods":["upstream_ruleset","manual_review"]},
           "validation": {"state":"partial","last_tested":review["reviewed_at"],"tests":["false_positive_review"]},
           "conflicts": [],
-          "notes": "Promotion proposal only; routing_match and release-policy evidence are still required before publication."
+          "notes": "Promotion proposal only; ownership/purpose classification, routing_match and release-policy evidence are still required before publication."
         })
     proposal={
       "schema_version":1,
