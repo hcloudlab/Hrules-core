@@ -48,7 +48,10 @@ def main()->int:
         accepted,rej=normalize(path.read_text(encoding="utf-8",errors="replace").splitlines())
         classified=len(accepted)+len(rej); ratio=len(rej)/classified if classified else 1
         if not accepted or ratio>a.max_reject_ratio: raise SystemExit(f"REFUSED {sid}: accepted={len(accepted)} rejected={len(rej)} ratio={ratio:.3f}")
-        for m in accepted:\n            key=(m["type"],m["value"])\n            provenance[key].append(sid)\n            semantics[key].add(m.get("semantic_lowering","EXACT"))
+        for m in accepted:
+            key=(m["type"],m["value"])
+            provenance[key].append(sid)
+            semantics[key].add(m.get("semantic_lowering","EXACT"))
         rejected.extend({"source":sid,**x} for x in rej)
         source_meta.append({"id":sid,"path":str(path),"sha256":sha(path),"accepted":len(accepted),"rejected":len(rej),"reject_ratio":ratio})
     existing=existing_matchers(Path(a.rules)); allowlist=load_allowlist(Path(a.allowlist)); candidates=[]; conflicts=[]; allowlisted=[]
