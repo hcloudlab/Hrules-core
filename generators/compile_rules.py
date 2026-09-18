@@ -148,18 +148,33 @@ def _ip_contains(container: dict, item: dict) -> bool:
         return False
 
 
+def _keyword_contains(container: dict, item: dict) -> bool:
+    if container.get("type") != "domain_keyword" or item.get("type") not in {"domain", "domain_suffix", "domain_keyword"}:
+        return False
+    cv, iv = str(container.get("value", "")).lower(), str(item.get("value", "")).lower()
+    return bool(cv) and cv in iv
+
+
 def exclusion_action(rule: dict, exclusions: list[dict]) -> str:
-    """Safely apply exclusions; fail closed when subtraction would be required."""
+    """Safely apply exclusions; suppression wins regardless of YAML order."""
     match = rule["match"]
+    suppressing = []
+    subtractive = []
     for item in exclusions:
         ex = item["match"]
         if ex == match or _domain_contains(ex, match) or _ip_contains(ex, match):
-            return "skip"
-        if _domain_contains(match, ex) or _ip_contains(match, ex):
-            raise ValueError(
-                f"exclusion {ex['type']}:{ex['value']} is narrower than "
-                f"rule {match['type']}:{match['value']}; subtractive lowering unsupported"
-            )
+            suppressing.append(ex)
+            continue
+        if _domain_contains(match, ex) or _ip_contains(match, ex) or _keyword_contains(match, ex):
+            subtractive.append(ex)
+    if suppressing:
+        return "skip"
+    if subtractive:
+        ex = subtractive[0]
+        raise ValueError(
+            f"exclusion {ex['type']}:{ex['value']} is narrower than "
+            f"rule {match['type']}:{match['value']}; subtractive lowering unsupported"
+        )
     return "keep"
 
 
