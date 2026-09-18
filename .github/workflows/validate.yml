@@ -33,6 +33,8 @@ jobs:
         run: python tests/test_upstream_guard.py
       - name: Run strict ABP normalizer tests
         run: python tests/test_abp_normalizer.py
+      - name: Validate source registry
+        run: python scripts/validate_sources.py
       - name: Validate Blocking allowlist
         run: python scripts/validate_blocking_allowlist.py
       - name: Run Blocking ingestion pipeline tests
