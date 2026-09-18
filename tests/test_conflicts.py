@@ -32,7 +32,22 @@ def main():
     check("disjoint IPv4 networks ignored", mod.relation(a, c) is None)
     check("IPv6 containment overlap detected", mod.relation(v6a, v6b) == "overlap")
     check("domain/IP families never overlap", mod.relation(a, entry("d","ordinary_proxy","d","domain_suffix","example.com")) is None)
-    import tempfile, yaml\n    with tempfile.TemporaryDirectory() as td:\n        root=Path(td)\n        (root/"a.yaml").write_text(yaml.safe_dump({"module":{"id":"a","policy_class":"direct_preferred"},"rules":[{"id":"a.net","match":{"type":"ip_cidr","value":"10.0.0.0/8"}}],"exclusions":[{"match":{"type":"ip_cidr","value":"10.0.0.0/8"},"reason":"suppress"}]}))\n        (root/"b.yaml").write_text(yaml.safe_dump({"module":{"id":"b","policy_class":"sensitive_account"},"rules":[{"id":"b.net","match":{"type":"ip_cidr","value":"10.1.0.0/16"}}]}))\n        loaded=mod.load_entries(root)\n        check("suppressed CIDR excluded from conflict input", [x.module for x in loaded]==["b"])\n    print("All conflict regression tests passed")
+    import tempfile
+    import yaml
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+        (root / "a.yaml").write_text(yaml.safe_dump({
+            "module": {"id": "a", "policy_class": "direct_preferred"},
+            "rules": [{"id": "a.net", "match": {"type": "ip_cidr", "value": "10.0.0.0/8"}}],
+            "exclusions": [{"match": {"type": "ip_cidr", "value": "10.0.0.0/8"}, "reason": "suppress"}],
+        }))
+        (root / "b.yaml").write_text(yaml.safe_dump({
+            "module": {"id": "b", "policy_class": "sensitive_account"},
+            "rules": [{"id": "b.net", "match": {"type": "ip_cidr", "value": "10.1.0.0/16"}}],
+        }))
+        loaded = mod.load_entries(root)
+        check("suppressed CIDR excluded from conflict input", [x.module for x in loaded] == ["b"])
+    print("All conflict regression tests passed")
 
 if __name__ == "__main__":
     main()
