@@ -1,0 +1,10 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema","title":"Hrules Source Registry","type":"object","additionalProperties":true,
+ "required":["schema_version","status","sources"],
+ "properties":{"schema_version":{"const":1},"status":{"enum":["research","validating","published"]},"sources":{"type":"object","additionalProperties":{"$ref":"#/$defs/source"}}},
+ "$defs":{"source":{"type":"object","additionalProperties":true,"required":["repository","role","license"],"properties":{
+  "repository":{"type":"string","pattern":"^[^/]+/[^/]+$"},"role":{"type":"string","minLength":1},"license":{"type":"string","minLength":1},
+  "upstream":{"type":"object","additionalProperties":false,"required":["ref","artifact","raw_url"],"properties":{"ref":{"type":"string","minLength":1},"artifact":{"type":"string","minLength":1},"raw_url":{"type":"string","format":"uri","pattern":"^https://"}}},
+  "ingestion":{"type":"object","additionalProperties":true,"properties":{"parser":{"type":"string","minLength":1},"anomaly_guard":{"enum":["required"]},"redistribution_review":{"enum":["required","cleared"]}}}
+ }}}
+}
