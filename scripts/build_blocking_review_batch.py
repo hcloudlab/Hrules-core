@@ -14,13 +14,12 @@ def main()->int:
     a=p.parse_args()
     cand=json.loads(Path(a.candidates).read_text()).get("candidates",[])
     risk=json.loads(Path(a.risk).read_text())
-    sample_index={}
-    for tier,items in risk.get("samples",{}).items():
-        for x in items: sample_index[x["id"]]=x
-    # Recompute eligibility from the full candidate set using risk analyzer output is intentionally
-    # conservative: only candidates present in deterministic tier samples can enter a batch.
+    annotated=risk.get("candidates",[])
+    if not annotated:
+        raise SystemExit("REFUSED: risk analysis lacks full candidate annotations")
     eligible=[]
-    for x in risk.get("samples",{}).get(a.tier,[]):
+    for x in annotated:
+        if x.get("risk",{}).get("tier") != a.tier: continue
         if x.get("root_concentration",10**9)>a.max_root_concentration: continue
         if a.require_multi_source and x.get("source_count",1)<2: continue
         eligible.append(x)
