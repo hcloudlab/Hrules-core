@@ -43,6 +43,8 @@ jobs:
         run: python tests/test_blocking_promotion.py
       - name: Run Blocking risk triage tests
         run: python tests/test_blocking_risk.py
+      - name: Run bounded Blocking review batch tests
+        run: python tests/test_blocking_review_batch.py
       - name: Run real Blocking upstream dry-run
         run: python scripts/run_blocking_dry_run.py
       - name: Assert dry-run remains non-canonical
