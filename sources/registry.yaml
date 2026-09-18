@@ -49,6 +49,10 @@ sources:
     role: blocking_candidate
     license: review_required
     candidate_categories: [blocking]
+    upstream:
+      ref: master
+      artifact: easylistchina.txt
+      raw_url: https://raw.githubusercontent.com/easylist/easylistchina/master/easylistchina.txt
     ingestion:
       parser: strict_abp_domain
       anomaly_guard: required
@@ -62,6 +66,10 @@ sources:
     role: blocking_candidate
     license: review_required
     candidate_categories: [blocking]
+    upstream:
+      ref: main
+      artifact: dns.txt
+      raw_url: https://raw.githubusercontent.com/Cats-Team/AdRules/main/dns.txt
     ingestion:
       parser: strict_abp_domain
       anomaly_guard: required
