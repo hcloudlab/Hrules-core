@@ -14,7 +14,7 @@ def main():
           {"id":"blk-cccccccccccccccc","match":{"type":"domain_suffix","value":"c.dense.test"},"sources":["a","b"],"source_count":2,"root_domain":"dense.test","root_concentration":50,"risk":{"tier":"low","score":0,"reasons":[]}}
         ]
         c.write_text(json.dumps({"status":"review_only","candidates":items}))
-        r.write_text(json.dumps({"status":"triage_only","samples":{"low":items,"medium":[],"high":[]}}))
+        r.write_text(json.dumps({"status":"triage_only","samples":{"low":items,"medium":[],"high":[]},"candidates":items}))
         subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_batch.py"),"--candidates",str(c),"--risk",str(r),"--out",str(out),"--limit","10","--max-root-concentration","10","--require-multi-source"],check=True,cwd=ROOT)
         doc=json.loads(out.read_text())
         check("only low-risk corroborated low-concentration candidate selected",[x["id"] for x in doc["selected"]]==["blk-aaaaaaaaaaaaaaaa"])
