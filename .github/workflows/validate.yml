@@ -33,8 +33,12 @@ jobs:
         run: python tests/test_upstream_guard.py
       - name: Run strict ABP normalizer tests
         run: python tests/test_abp_normalizer.py
+      - name: Validate Blocking allowlist
+        run: python scripts/validate_blocking_allowlist.py
       - name: Run Blocking ingestion pipeline tests
         run: python tests/test_blocking_ingestion.py
+      - name: Run Blocking review gate tests
+        run: python tests/test_blocking_review_gate.py
       - name: Run compiler contract tests
         run: python tests/test_compiler.py
       - name: Run profile contract tests
