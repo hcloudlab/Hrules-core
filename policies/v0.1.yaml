@@ -16,6 +16,14 @@ routing_stages:
 # routing policies. Client templates decide how each logical policy is rendered.
 
 logical_policies:
+  blocking_reject:
+    routing_stage: blocking
+    display_name: REJECT
+    behavior: reject
+    user_visible: false
+    notes:
+      - Blocking is opt-in at profile/template level until false-positive acceptance is complete.
+
   sensitive_ai:
     routing_stage: sensitive_service
     display_name: "🔐 Claude / OpenAI [自选]"
@@ -129,6 +137,7 @@ logical_policies:
       - Broader CN domains/IPs require a reviewed upstream adapter before release.
 
 module_bindings:
+  blocking: blocking_reject
   claude: sensitive_ai
   openai: sensitive_ai
   gemini: general_ai
