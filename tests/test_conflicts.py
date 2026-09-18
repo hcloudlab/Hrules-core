@@ -46,7 +46,7 @@ def main():
             "rules": [{"id": "b.net", "match": {"type": "ip_cidr", "value": "10.1.0.0/16"}}],
         }))
         loaded = mod.load_entries(root)
-        check("suppressed CIDR excluded from conflict input", [x.module for x in loaded] == ["b"])
+        check("suppressed CIDR excluded from conflict input", [(x.module, x.value) for x in loaded] == [("b", "10.1.0.0/16")])
     print("All conflict regression tests passed")
 
 if __name__ == "__main__":
