@@ -67,7 +67,23 @@ def main():
 
     excluded = module()
     excluded["exclusions"] = [{"match": {"type": "domain_suffix", "value": "example.com"}, "reason": "test"}]
-    check("exact exclusion suppresses matcher", compiler.compile_module(excluded, "mihomo", True, policy) == "")\n\n    ordered_exclusions = module(value="example.com")\n    ordered_exclusions["exclusions"] = [\n        {"match": {"type": "domain", "value": "login.example.com"}, "reason": "narrow"},\n        {"match": {"type": "domain_suffix", "value": "example.com"}, "reason": "broad suppressor"},\n    ]\n    check("suppression beats earlier subtractive exclusion", compiler.compile_module(ordered_exclusions, "mihomo", True, policy) == "")\n\n    keyword = module(match_type="domain_keyword", value="google")\n    keyword["exclusions"] = [{"match": {"type": "domain", "value": "login.google.com"}, "reason": "narrow"}]\n    try:\n        compiler.compile_module(keyword, "mihomo", True, policy)\n    except ValueError as exc:\n        check("keyword narrower exclusion fails closed", "subtractive lowering unsupported" in str(exc))\n    else:\n        raise AssertionError("keyword narrower exclusion must fail closed")
+    check("exact exclusion suppresses matcher", compiler.compile_module(excluded, "mihomo", True, policy) == "")
+
+    ordered_exclusions = module(value="example.com")
+    ordered_exclusions["exclusions"] = [
+        {"match": {"type": "domain", "value": "login.example.com"}, "reason": "narrow"},
+        {"match": {"type": "domain_suffix", "value": "example.com"}, "reason": "broad suppressor"},
+    ]
+    check("suppression beats earlier subtractive exclusion", compiler.compile_module(ordered_exclusions, "mihomo", True, policy) == "")
+
+    keyword = module(match_type="domain_keyword", value="google")
+    keyword["exclusions"] = [{"match": {"type": "domain", "value": "login.google.com"}, "reason": "narrow"}]
+    try:
+        compiler.compile_module(keyword, "mihomo", True, policy)
+    except ValueError as exc:
+        check("keyword narrower exclusion fails closed", "subtractive lowering unsupported" in str(exc))
+    else:
+        raise AssertionError("keyword narrower exclusion must fail closed")
 
     subtractive = module(value="example.com")
     subtractive["exclusions"] = [{"match": {"type": "domain", "value": "login.example.com"}, "reason": "shared"}]
