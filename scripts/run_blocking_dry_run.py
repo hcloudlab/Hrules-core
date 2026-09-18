@@ -21,7 +21,10 @@ def main()->int:
     candidates=out/"candidates.json"; report=out/"report.json"
     subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_candidates.py"),*specs,"--out",str(candidates),"--report",str(report),"--max-reject-ratio",str(a.max_reject_ratio)],check=True,cwd=ROOT)
     rep=json.loads(report.read_text()); doc=json.loads(candidates.read_text())
-    summary={"sources":rep["sources"],"candidate_count":len(doc["candidates"]),"conflict_count":len(rep["conflicts"]),"allowlisted_count":rep["allowlisted_count"],"rejected_count":rep["rejected_count"]}
+    risk=out/"risk-analysis.json"
+    subprocess.run([sys.executable,str(ROOT/"scripts/analyze_blocking_risk.py"),"--candidates",str(candidates),"--out",str(risk)],check=True,cwd=ROOT)
+    risk_doc=json.loads(risk.read_text())
+    summary={"sources":rep["sources"],"candidate_count":len(doc["candidates"]),"conflict_count":len(rep["conflicts"]),"allowlisted_count":rep["allowlisted_count"],"rejected_count":rep["rejected_count"],"risk_counts":risk_doc["risk_counts"],"top_root_concentrations":risk_doc["top_root_concentrations"][:20]}
     (out/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2)+"\n")
     print(json.dumps(summary,ensure_ascii=False))
     return 0
