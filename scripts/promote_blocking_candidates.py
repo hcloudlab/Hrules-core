@@ -18,19 +18,20 @@ def main()->int:
     gated=json.loads(Path(a.gated).read_text())
     template=yaml.safe_load(Path(a.module_template).read_text()) or {}
     rules=[]
-    for item in gated.get("promotable",[]):
-        review=item["review"]; sources=item.get("sources",[])
+    items=gated.get("ready", gated.get("promotable",[]))
+    for item in items:
+        review=item["review"]; sources=item.get("sources",[]); classification=item.get("classification")
         level="corroborated" if len(set(sources))>=2 else "candidate"
         rules.append({
           "id": item["id"],
           "match": item["match"],
-          "ownership": "unknown",
-          "purpose": "unknown",
+          "ownership": classification["ownership"] if classification else "unknown",
+          "purpose": classification["purpose"] if classification else "unknown",
           "provenance": {"kind":"upstream","source":",".join(sorted(set(sources))),"reference":item["id"],"observed_at":review["reviewed_at"]},
           "evidence": {"level":level,"methods":["upstream_ruleset","manual_review"]},
           "validation": {"state":"partial","last_tested":review["reviewed_at"],"tests":["false_positive_review"]},
           "conflicts": [],
-          "notes": "Promotion proposal only; ownership/purpose classification, routing_match and release-policy evidence are still required before publication."
+          "notes": "Promotion proposal only; routing_match, verified evidence and release-policy checks are still required before publication." if classification else "Promotion proposal only; ownership/purpose classification, routing_match and release-policy evidence are still required before publication."
         })
     proposal={
       "schema_version":1,
