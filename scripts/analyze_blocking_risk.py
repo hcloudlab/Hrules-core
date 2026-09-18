@@ -53,7 +53,7 @@ def main()->int:
         samples[tier]=pool[:a.sample_size]
     top=[{"root_domain":r,"candidate_count":n} for r,n in roots.most_common(100)]
     out={"schema_version":1,"status":"triage_only","candidate_count":len(enriched),"risk_counts":dict(tiers),
-         "top_root_concentrations":top,"samples":samples}
+         "top_root_concentrations":top,"samples":samples,"candidates":enriched}
     Path(a.out).parent.mkdir(parents=True,exist_ok=True); Path(a.out).write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n")
     print(f"TRIAGE ONLY candidates={len(enriched)} high={tiers['high']} medium={tiers['medium']} low={tiers['low']}")
     return 0
