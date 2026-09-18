@@ -7,7 +7,7 @@ def check(n,c):
     print("PASS",n)
 def main():
     with tempfile.TemporaryDirectory() as td:
-        d=Path(td); (d/"a.txt").write_text("ads.example.com\nshared.example.com\n@@||allow.example^\n")
+        d=Path(td); (d/"a.txt").write_text("ads.example.com\nshared.example.com\nchild.service.example.com\nprotected.example.com\n@@||allow.example^\n")
         (d/"b.txt").write_text("ads.example.com\ntracker.example.com\n")
         rules=d/"rules"; rules.mkdir()
         (rules/"service.yaml").write_text("""schema_version: 1
@@ -17,7 +17,7 @@ rules:
     match: {type: domain_suffix, value: shared.example.com}
 """)
         out=d/"out.json"; report=d/"report.json"
-        cmd=[sys.executable,str(ROOT/"scripts/build_blocking_candidates.py"),"--source",f"a={d/'a.txt'}","--source",f"b={d/'b.txt'}","--rules",str(rules),"--out",str(out),"--report",str(report),"--max-reject-ratio","0.5"]
+        cmd=[sys.executable,str(ROOT/"scripts/build_blocking_candidates.py"),"--source",f"a={d/'a.txt'}","--source",f"b={d/'b.txt'}","--rules",str(rules),"--out",str(out),"--report",str(report),"--allowlist",str(allow),"--max-reject-ratio","0.5"]
         subprocess.run(cmd,check=True,cwd=ROOT)
         doc=json.loads(out.read_text()); rep=json.loads(report.read_text())
         by={x["match"]["value"]:x for x in doc["candidates"]}
