@@ -29,6 +29,9 @@ def main():
     check("source mixed port preserved", out["mixed-port"] == 7897)
     check("source allow-lan preserved", out["allow-lan"] is True)
     check("DNS preserved", out["dns"] == source["dns"])
+    check("unknown runtime key external-ui preserved", out["external-ui"] == source["external-ui"])
+    check("unknown runtime key keep-alive-interval preserved", out["keep-alive-interval"] == source["keep-alive-interval"])
+    check("source rule-providers removed when Hrules owns routing", "rule-providers" not in out)
     names = {g["name"] for g in out["proxy-groups"]}
     check("all five region groups discovered", all(x in names for x in ["🇺🇸 美国 [系统]", "🇯🇵 日本 [系统]", "🇸🇬 新加坡 [系统]", "🇭🇰 香港 [系统]", "🇹🇼 台湾 [系统]"]))
     check("Hrules default rule present", out["rules"][-1] == "MATCH,🚀 默认代理 [自选]")
