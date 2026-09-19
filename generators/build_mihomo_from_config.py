@@ -17,6 +17,8 @@ builder = importlib.util.module_from_spec(spec)
 assert spec and spec.loader
 spec.loader.exec_module(builder)
 
+DROP_KEYS = {"proxy-groups", "rules", "rule-providers", "proxies", "mode"}
+
 PRESERVE_KEYS = (
     "ipv6", "external-controller", "secret", "unified-delay", "tcp-concurrent",
     "find-process-mode", "global-client-fingerprint", "profile", "geodata-mode",
@@ -39,7 +41,11 @@ def build(source: dict, template: dict, rules_root: Path, policy_path: Path, inc
     if len(names) != len(set(names)):
         raise ValueError("source proxy names must be unique")
 
-    out = {
+    # Preserve unknown top-level runtime keys from the user's source config.
+    # Hrules replaces only routing-owned keys; this avoids silently dropping
+    # subscription/client settings that are unrelated to routing policy.
+    out = {k: v for k, v in source.items() if k not in DROP_KEYS}
+    out.update({
         "mixed-port": source.get("mixed-port", 7890),
         "allow-lan": source.get("allow-lan", False),
         "mode": "rule",
@@ -47,7 +53,7 @@ def build(source: dict, template: dict, rules_root: Path, policy_path: Path, inc
         "proxies": proxies,
         "proxy-groups": builder.build_groups(template, names),
         "rules": builder.build_rules(rules_root, policy_path, include_research),
-    }
+    })
     for key in PRESERVE_KEYS:
         if key in source:
             out[key] = source[key]
