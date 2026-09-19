@@ -3,148 +3,91 @@ template_version: v0.1
 client: mihomo
 status: prototype
 
-# This is a topology contract, not yet a complete importable Clash Verge config.
-# Generators will merge validated rule artifacts and subscription/provider nodes.
-
+# Region groups are organizational selectors. Node-name matching is automatic;
+# manual region membership can override/extend it when transforming a real config.
 region_groups:
   - id: us
-    name: "🇺🇸 美国 [系统]"
-    type: url-test
-    include_all: true
-    filter: "(?i)(美国|US|United States|Los Angeles|San Jose|Seattle|Dallas|New York)"
-    test_url: "https://www.gstatic.com/generate_204"
-    interval: 300
-    tolerance: 50
+    name: "🇺🇸 美国 [地区]"
+    type: select
+    filter: "(?i)(美国|USA?|United States|Los Angeles|San Jose|Seattle|Dallas|New York|🇺🇸)"
   - id: jp
-    name: "🇯🇵 日本 [系统]"
-    type: url-test
-    include_all: true
-    filter: "(?i)(日本|JP|Japan|Tokyo|Osaka)"
-    test_url: "https://www.gstatic.com/generate_204"
-    interval: 300
-    tolerance: 50
+    name: "🇯🇵 日本 [地区]"
+    type: select
+    filter: "(?i)(日本|JP|Japan|Tokyo|Osaka|🇯🇵)"
   - id: sg
-    name: "🇸🇬 新加坡 [系统]"
-    type: url-test
-    include_all: true
-    filter: "(?i)(新加坡|SG|Singapore)"
-    test_url: "https://www.gstatic.com/generate_204"
-    interval: 300
-    tolerance: 50
+    name: "🇸🇬 新加坡 [地区]"
+    type: select
+    filter: "(?i)(新加坡|SG|Singapore|🇸🇬)"
   - id: hk
-    name: "🇭🇰 香港 [系统]"
-    type: url-test
-    include_all: true
-    filter: "(?i)(香港|HK|Hong Kong)"
-    test_url: "https://www.gstatic.com/generate_204"
-    interval: 300
-    tolerance: 50
+    name: "🇭🇰 香港 [地区]"
+    type: select
+    filter: "(?i)(香港|HK|Hong Kong|🇭🇰)"
   - id: tw
-    name: "🇹🇼 台湾 [系统]"
-    type: url-test
-    include_all: true
-    filter: "(?i)(台湾|台灣|TW|Taiwan)"
-    test_url: "https://www.gstatic.com/generate_204"
-    interval: 300
-    tolerance: 50
+    name: "🇹🇼 台湾 [地区]"
+    type: select
+    filter: "(?i)(台湾|台灣|TW|Taiwan|🇹🇼)"
 
 system_groups:
   - id: all
     name: "🌐 全部节点 [系统]"
     type: select
-    include_all: true
   - id: auto
     name: "♻️ 自动选择 [系统]"
     type: url-test
-    include_all: true
     test_url: "https://www.gstatic.com/generate_204"
     interval: 300
     tolerance: 50
+  - id: fallback
+    name: "🛡️ 故障转移 [系统]"
+    type: fallback
+    test_url: "https://www.gstatic.com/generate_204"
+    interval: 300
+  - id: load-balance
+    name: "⚖️ 负载均衡 [系统]"
+    type: load-balance
+    strategy: consistent-hashing
+    test_url: "https://www.gstatic.com/generate_204"
+    interval: 300
 
+# Scene groups are independent user-facing routing entrances.
+# A scene selects a region (then a concrete node inside that region), or a generic
+# system strategy when stable identity is not required.
 user_groups:
   - policy: sensitive_ai
-    name: "🔐 Claude / OpenAI [自选]"
+    name: "🔐 Claude / OpenAI [场景]"
     type: select
-    candidates:
-      - "🇺🇸 美国 [系统]"
-      - "🇯🇵 日本 [系统]"
-      - "🇸🇬 新加坡 [系统]"
-      - "🇭🇰 香港 [系统]"
-      - "🇹🇼 台湾 [系统]"
-      - "🌐 全部节点 [系统]"
-    optional_slots:
-      - "🎯 固定节点 [自选]"
-      - "🏠 ISP / 住宅 [自选]"
-
+    candidates: ["🇺🇸 美国 [地区]", "🇯🇵 日本 [地区]", "🇸🇬 新加坡 [地区]", "🇭🇰 香港 [地区]", "🇹🇼 台湾 [地区]", "🌐 全部节点 [系统]"]
   - policy: general_ai
-    name: "🤖 AI 服务 [自选]"
+    name: "🤖 AI 服务 [场景]"
     type: select
-    candidates:
-      - "♻️ 自动选择 [系统]"
-      - "🇺🇸 美国 [系统]"
-      - "🇯🇵 日本 [系统]"
-      - "🇸🇬 新加坡 [系统]"
-      - "🌐 全部节点 [系统]"
-
+    candidates: ["♻️ 自动选择 [系统]", "🛡️ 故障转移 [系统]", "🇺🇸 美国 [地区]", "🇯🇵 日本 [地区]", "🇸🇬 新加坡 [地区]", "🇭🇰 香港 [地区]", "🌐 全部节点 [系统]"]
   - policy: youtube_media
-    name: "📺 YouTube [自选]"
+    name: "📺 YouTube [场景]"
     type: select
-    candidates:
-      - "♻️ 自动选择 [系统]"
-      - "🇺🇸 美国 [系统]"
-      - "🇯🇵 日本 [系统]"
-      - "🇸🇬 新加坡 [系统]"
-      - "🇭🇰 香港 [系统]"
-      - "🇹🇼 台湾 [系统]"
-      - "🌐 全部节点 [系统]"
-
+    candidates: ["♻️ 自动选择 [系统]", "🛡️ 故障转移 [系统]", "⚖️ 负载均衡 [系统]", "🇺🇸 美国 [地区]", "🇯🇵 日本 [地区]", "🇸🇬 新加坡 [地区]", "🇭🇰 香港 [地区]", "🇹🇼 台湾 [地区]", "🌐 全部节点 [系统]"]
   - policy: telegram_communication
-    name: "💬 Telegram [自选]"
+    name: "💬 Telegram [场景]"
     type: select
-    candidates:
-      - "♻️ 自动选择 [系统]"
-      - "🇺🇸 美国 [系统]"
-      - "🇯🇵 日本 [系统]"
-      - "🇸🇬 新加坡 [系统]"
-      - "🇭🇰 香港 [系统]"
-      - "🇹🇼 台湾 [系统]"
-      - "🌐 全部节点 [系统]"
-
+    candidates: ["♻️ 自动选择 [系统]", "🛡️ 故障转移 [系统]", "🇺🇸 美国 [地区]", "🇯🇵 日本 [地区]", "🇸🇬 新加坡 [地区]", "🇭🇰 香港 [地区]", "🇹🇼 台湾 [地区]", "🌐 全部节点 [系统]"]
   - policy: crypto_account
-    name: "💰 虚拟货币 [自选]"
+    name: "💰 虚拟货币 [场景]"
     type: select
-    candidates:
-      - "🇺🇸 美国 [系统]"
-      - "🇯🇵 日本 [系统]"
-      - "🇸🇬 新加坡 [系统]"
-      - "🌐 全部节点 [系统]"
-    optional_slots: ["🎯 固定节点 [自选]", "🏠 ISP / 住宅 [自选]"]
-
+    candidates: ["🇺🇸 美国 [地区]", "🇯🇵 日本 [地区]", "🇸🇬 新加坡 [地区]", "🇭🇰 香港 [地区]", "🌐 全部节点 [系统]"]
   - policy: us_banking_account
-    name: "🏦 美国银行 [自选]"
+    name: "🏦 美国银行 [场景]"
     type: select
-    candidates:
-      - "🇺🇸 美国 [系统]"
-      - "🌐 全部节点 [系统]"
-    optional_slots: ["🎯 固定节点 [自选]", "🏠 ISP / 住宅 [自选]"]
-
+    candidates: ["🇺🇸 美国 [地区]", "🇯🇵 日本 [地区]", "🇸🇬 新加坡 [地区]", "🇭🇰 香港 [地区]", "🌐 全部节点 [系统]"]
   - policy: brokerage_account
-    name: "📈 美股 [自选]"
+    name: "📈 美股 [场景]"
     type: select
-    candidates:
-      - "🇺🇸 美国 [系统]"
-      - "🌐 全部节点 [系统]"
-    optional_slots: ["🎯 固定节点 [自选]", "🏠 ISP / 住宅 [自选]"]
+    candidates: ["🇺🇸 美国 [地区]", "🇯🇵 日本 [地区]", "🇸🇬 新加坡 [地区]", "🇭🇰 香港 [地区]", "🌐 全部节点 [系统]"]
 
 fallback:
-  name: "🚀 默认代理 [自选]"
+  name: "🚀 漏网之鱼 [自选]"
   type: select
-  candidates:
-    - "♻️ 自动选择 [系统]"
-    - "🌐 全部节点 [系统]"
+  candidates: ["♻️ 自动选择 [系统]", "🛡️ 故障转移 [系统]", "⚖️ 负载均衡 [系统]", "🌐 全部节点 [系统]"]
 
 safety_contract:
-  optional_slots_must_not_be_referenced_when_empty: true
   missing_region_must_not_break_config: true
   sensitive_groups_must_not_default_to_cross_region_global_auto: true
   canonical_policy_names_must_match_policy_mapping: true

@@ -27,21 +27,21 @@ def main():
     rules = cfg["rules"]
 
     check("all proxy groups are non-empty", all(g.get("proxies") for g in cfg["proxy-groups"]))
-    check("Claude routed to sensitive AI group", "DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [自选]" in rules)
-    check("OpenAI routed to sensitive AI group", "DOMAIN-SUFFIX,openai.com,🔐 Claude / OpenAI [自选]" in rules)
-    check("ChatGPT routed to sensitive AI group", "DOMAIN-SUFFIX,chatgpt.com,🔐 Claude / OpenAI [自选]" in rules)
-    check("OpenAI content routed to sensitive AI group", "DOMAIN-SUFFIX,oaiusercontent.com,🔐 Claude / OpenAI [自选]" in rules)
-    check("Gemini routed to general AI group", "DOMAIN-SUFFIX,gemini.google.com,🤖 AI 服务 [自选]" in rules)
-    check("YouTube routed to YouTube group", "DOMAIN-SUFFIX,youtube.com,📺 YouTube [自选]" in rules)
-    check("Telegram routed to Telegram group", "DOMAIN-SUFFIX,telegram.org,💬 Telegram [自选]" in rules)
-    check("Telegram short links routed to Telegram group", "DOMAIN-SUFFIX,t.me,💬 Telegram [自选]" in rules)
+    check("Claude routed to sensitive AI group", "DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [场景]" in rules)
+    check("OpenAI routed to sensitive AI group", "DOMAIN-SUFFIX,openai.com,🔐 Claude / OpenAI [场景]" in rules)
+    check("ChatGPT routed to sensitive AI group", "DOMAIN-SUFFIX,chatgpt.com,🔐 Claude / OpenAI [场景]" in rules)
+    check("OpenAI content routed to sensitive AI group", "DOMAIN-SUFFIX,oaiusercontent.com,🔐 Claude / OpenAI [场景]" in rules)
+    check("Gemini routed to general AI group", "DOMAIN-SUFFIX,gemini.google.com,🤖 AI 服务 [场景]" in rules)
+    check("YouTube routed to YouTube group", "DOMAIN-SUFFIX,youtube.com,📺 YouTube [场景]" in rules)
+    check("Telegram routed to Telegram group", "DOMAIN-SUFFIX,telegram.org,💬 Telegram [场景]" in rules)
+    check("Telegram short links routed to Telegram group", "DOMAIN-SUFFIX,t.me,💬 Telegram [场景]" in rules)
     check("Adjust analytics exact hostname rejected", "DOMAIN,app.adjust.com,REJECT" in rules)
     check("WebEngage analytics exact hostname rejected", "DOMAIN,c.webengage.com,REJECT" in rules)
     check("Tenjin attribution exact hostname rejected", "DOMAIN,track.tenjin.io,REJECT" in rules)
     check("Segment settings exact hostname rejected", "DOMAIN,cdn-settings.segment.com,REJECT" in rules)
     check("Ensighten tag endpoint exact hostname rejected", "DOMAIN,nexus.ensighten.com,REJECT" in rules)
 
-    crypto = "💰 虚拟货币 [自选]"
+    crypto = "💰 虚拟货币 [场景]"
     check("Coinbase routed to crypto group", f"DOMAIN-SUFFIX,coinbase.com,{crypto}" in rules)
     check("Binance routed to crypto group", f"DOMAIN-SUFFIX,binance.com,{crypto}" in rules)
     check("Binance.US routed to crypto group", f"DOMAIN-SUFFIX,binance.us,{crypto}" in rules)
@@ -49,7 +49,7 @@ def main():
     check("Bybit routed to crypto group", f"DOMAIN-SUFFIX,bybit.com,{crypto}" in rules)
     check("Kraken routed to crypto group", f"DOMAIN-SUFFIX,kraken.com,{crypto}" in rules)
 
-    banking = "🏦 美国银行 [自选]"
+    banking = "🏦 美国银行 [场景]"
     check("Bank of America routed to US banking group", f"DOMAIN-SUFFIX,bankofamerica.com,{banking}" in rules)
     check("Chase routed to US banking group", f"DOMAIN-SUFFIX,chase.com,{banking}" in rules)
     check("Wells Fargo routed to US banking group", f"DOMAIN-SUFFIX,wellsfargo.com,{banking}" in rules)
@@ -59,7 +59,7 @@ def main():
     check("Capital One routed to US banking group", f"DOMAIN-SUFFIX,capitalone.com,{banking}" in rules)
     check("American Express routed to US banking group", f"DOMAIN-SUFFIX,americanexpress.com,{banking}" in rules)
 
-    stocks = "📈 美股 [自选]"
+    stocks = "📈 美股 [场景]"
     check("IBKR routed to stocks group", f"DOMAIN-SUFFIX,interactivebrokers.com,{stocks}" in rules)
     check("IBKR short domain routed to stocks group", f"DOMAIN-SUFFIX,ibkr.com,{stocks}" in rules)
     check("TradingView inherits stocks user choice", f"DOMAIN-SUFFIX,tradingview.com,{stocks}" in rules)
@@ -70,27 +70,27 @@ def main():
     check("CN suffix routed DIRECT", "DOMAIN-SUFFIX,cn,DIRECT" in rules)
     check(
         "Blocking precedes sensitive services",
-        rules.index("DOMAIN,app.adjust.com,REJECT") < rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [自选]"),
+        rules.index("DOMAIN,app.adjust.com,REJECT") < rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [场景]"),
     )
     check(
         "private rules precede sensitive services",
-        rules.index("IP-CIDR,10.0.0.0/8,DIRECT") < rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [自选]"),
+        rules.index("IP-CIDR,10.0.0.0/8,DIRECT") < rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [场景]"),
     )
     check(
         "sensitive services precede CN fallback domain",
-        rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [自选]") < rules.index("DOMAIN-SUFFIX,cn,DIRECT"),
+        rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [场景]") < rules.index("DOMAIN-SUFFIX,cn,DIRECT"),
     )
     check(
         "ordinary services precede CN fallback domain",
-        rules.index("DOMAIN-SUFFIX,youtube.com,📺 YouTube [自选]") < rules.index("DOMAIN-SUFFIX,cn,DIRECT"),
+        rules.index("DOMAIN-SUFFIX,youtube.com,📺 YouTube [场景]") < rules.index("DOMAIN-SUFFIX,cn,DIRECT"),
     )
-    check("MATCH is final rule", rules[-1] == "MATCH,🚀 默认代理 [自选]")
+    check("MATCH is final rule", rules[-1] == "MATCH,🚀 漏网之鱼 [自选]")
 
-    sensitive = groups["🔐 Claude / OpenAI [自选]"]["proxies"]
+    sensitive = groups["🔐 Claude / OpenAI [场景]"]["proxies"]
     check("sensitive AI excludes cross-region global auto", "♻️ 自动选择 [系统]" not in sensitive)
     check("sensitive AI has at least one usable choice", bool(sensitive))
-    check("YouTube group exists", "📺 YouTube [自选]" in groups)
-    check("Telegram group exists", "💬 Telegram [自选]" in groups)
+    check("YouTube group exists", "📺 YouTube [场景]" in groups)
+    check("Telegram group exists", "💬 Telegram [场景]" in groups)
     check("Crypto group exists", crypto in groups)
     check("Crypto excludes cross-region global auto", "♻️ 自动选择 [系统]" not in groups[crypto]["proxies"])
     check("Crypto has at least one usable choice", bool(groups[crypto]["proxies"]))

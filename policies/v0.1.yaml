@@ -26,7 +26,7 @@ logical_policies:
 
   sensitive_ai:
     routing_stage: sensitive_service
-    display_name: "🔐 Claude / OpenAI [自选]"
+    display_name: "🔐 Claude / OpenAI [场景]"
     behavior: sensitive_account
     user_visible: true
     egress_requirements:
@@ -41,7 +41,7 @@ logical_policies:
 
   general_ai:
     routing_stage: ordinary_service
-    display_name: "🤖 AI 服务 [自选]"
+    display_name: "🤖 AI 服务 [场景]"
     behavior: region_preferred
     user_visible: true
     egress_requirements:
@@ -53,7 +53,7 @@ logical_policies:
 
   youtube_media:
     routing_stage: ordinary_service
-    display_name: "📺 YouTube [自选]"
+    display_name: "📺 YouTube [场景]"
     behavior: ordinary_proxy
     user_visible: true
     egress_requirements:
@@ -65,7 +65,7 @@ logical_policies:
 
   telegram_communication:
     routing_stage: ordinary_service
-    display_name: "💬 Telegram [自选]"
+    display_name: "💬 Telegram [场景]"
     behavior: ordinary_proxy
     user_visible: true
     egress_requirements:
@@ -77,7 +77,7 @@ logical_policies:
 
   crypto_account:
     routing_stage: sensitive_service
-    display_name: "💰 虚拟货币 [自选]"
+    display_name: "💰 虚拟货币 [场景]"
     behavior: sensitive_account
     user_visible: true
     egress_requirements:
@@ -89,7 +89,7 @@ logical_policies:
 
   us_banking_account:
     routing_stage: sensitive_service
-    display_name: "🏦 美国银行 [自选]"
+    display_name: "🏦 美国银行 [场景]"
     behavior: sensitive_account
     user_visible: true
     egress_requirements:
@@ -101,7 +101,7 @@ logical_policies:
 
   brokerage_account:
     routing_stage: sensitive_service
-    display_name: "📈 美股 [自选]"
+    display_name: "📈 美股 [场景]"
     behavior: sensitive_account
     user_visible: true
     egress_requirements:
@@ -113,7 +113,7 @@ logical_policies:
 
   stock_market_data:
     routing_stage: ordinary_service
-    display_name: "📈 美股 [自选]"
+    display_name: "📈 美股 [场景]"
     behavior: informational
     user_visible: false
     inherit_user_choice_from: brokerage_account
