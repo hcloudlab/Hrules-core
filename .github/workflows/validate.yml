@@ -155,7 +155,7 @@ jobs:
           assert out['mode']=='rule'
           assert out['proxy-groups'] != src['proxy-groups']
           assert out['rules'] != src['rules']
-          assert out['rules'][-1]=='MATCH,🚀 默认代理 [自选]'
+          assert out['rules'][-1]=='MATCH,🚀 漏网之鱼 [自选]'
           assert any(x=='DOMAIN,app.adjust.com,REJECT' for x in out['rules'])
           assert any(x=='DOMAIN,c.webengage.com,REJECT' for x in out['rules'])
           print('PASS Mihomo v0.1 transformation contract')
