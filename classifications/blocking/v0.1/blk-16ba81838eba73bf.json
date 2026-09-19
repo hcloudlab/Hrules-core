@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "candidate_id": "blk-16ba81838eba73bf",
+  "ownership": "dedicated_third_party",
+  "purpose": "analytics",
+  "classifier": "HCloudLab assisted evidence review",
+  "classified_at": "2026-09-18",
+  "evidence": [
+    "https://docs.webengage.com/docs/realtime-uninstall-tracking",
+    "https://docs.webengage.com/docs/apple-privacy-manifest-update-for-ios-apps"
+  ],
+  "reason": "WebEngage is a dedicated third-party engagement/analytics platform; c.webengage.com is documented for tracking and telemetry-style data collection."
+}

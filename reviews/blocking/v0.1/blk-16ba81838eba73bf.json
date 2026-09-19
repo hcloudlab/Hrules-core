@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "candidate_id": "blk-16ba81838eba73bf",
+  "decision": "block",
+  "reviewer": "HCloudLab assisted evidence review",
+  "reviewed_at": "2026-09-18",
+  "expires": null,
+  "reason": "Official WebEngage documentation identifies c.webengage.com as a tracking/data-collection endpoint and lists it as an NSPrivacyTrackingDomain. The candidate is an exact hostname corroborated by two native hosts sources, limiting impact to the documented tracking endpoint.",
+  "checks": {
+    "service_overlap_reviewed": true,
+    "root_domain_reviewed": true,
+    "false_positive_reviewed": true
+  },
+  "evidence": [
+    "https://docs.webengage.com/docs/realtime-uninstall-tracking",
+    "https://docs.webengage.com/docs/apple-privacy-manifest-update-for-ios-apps"
+  ]
+}

@@ -30,6 +30,8 @@ def main()->int:
     batch=out/"first-review-batch.json"
     subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_batch.py"),"--candidates",str(candidates),"--risk",str(risk),"--out",str(batch),"--tier","low","--limit","100","--max-root-concentration","10","--require-exact-lowering"],check=True,cwd=ROOT)
     batch_doc=json.loads(batch.read_text())
+    packet_json=out/"exact-review-packet.json"; packet_md=out/"exact-review-packet.md"
+    subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_packet.py"),"--batch",str(batch),"--out-json",str(packet_json),"--out-md",str(packet_md)],check=True,cwd=ROOT)
     safe_batch=out/"corroborated-safe-degrade-batch.json"
     subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_batch.py"),"--candidates",str(candidates),"--risk",str(risk),"--out",str(safe_batch),"--tier","low","--limit","100","--max-root-concentration","10","--require-multi-source"],check=True,cwd=ROOT)
     safe_doc=json.loads(safe_batch.read_text())
@@ -37,5 +39,15 @@ def main()->int:
     summary={"sources":rep["sources"],"candidate_count":len(doc["candidates"]),"conflict_count":len(rep["conflicts"]),"allowlisted_count":rep["allowlisted_count"],"rejected_count":rep["rejected_count"],"risk_counts":risk_doc["risk_counts"],"top_root_concentrations":risk_doc["top_root_concentrations"][:20],"first_review_batch_count":len(batch_doc["selected"]),"first_review_batch_source_counts":dict(sorted(exact_sources.items())),"corroborated_safe_degrade_batch_count":len(safe_doc["selected"])}
     (out/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2)+"\n")
     print(json.dumps(summary,ensure_ascii=False))
+    print("EXACT REVIEW CANDIDATES")
+    for item in batch_doc["selected"]:
+        print(json.dumps({
+            "id": item["id"],
+            "match": item["match"],
+            "sources": item.get("sources",[]),
+            "root_domain": item.get("root_domain"),
+            "root_concentration": item.get("root_concentration"),
+            "risk": item.get("risk",{})
+        }, ensure_ascii=False, sort_keys=True))
     return 0
 if __name__=="__main__": raise SystemExit(main())

@@ -17,5 +17,8 @@ def main()->int:
    if missing:print(f"FAIL {sid}: blocking_candidate missing {','.join(missing)}");return 1
    if s.get("license")=="review_required" and s["ingestion"].get("redistribution_review")!="required":
     print(f"FAIL {sid}: unresolved license must require redistribution review");return 1
+   ing=s.get("ingestion",{})
+   if ing.get("redistribution_review")=="cleared" and ing.get("attribution_required") and not ing.get("attribution_notice"):
+    print(f"FAIL {sid}: cleared redistribution with attribution requirement needs attribution_notice");return 1
  print(f"PASS source registry: {len(doc.get('sources',{}))} sources");return 0
 if __name__=="__main__":raise SystemExit(main())
