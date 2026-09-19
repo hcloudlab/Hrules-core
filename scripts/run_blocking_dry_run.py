@@ -39,5 +39,15 @@ def main()->int:
     summary={"sources":rep["sources"],"candidate_count":len(doc["candidates"]),"conflict_count":len(rep["conflicts"]),"allowlisted_count":rep["allowlisted_count"],"rejected_count":rep["rejected_count"],"risk_counts":risk_doc["risk_counts"],"top_root_concentrations":risk_doc["top_root_concentrations"][:20],"first_review_batch_count":len(batch_doc["selected"]),"first_review_batch_source_counts":dict(sorted(exact_sources.items())),"corroborated_safe_degrade_batch_count":len(safe_doc["selected"])}
     (out/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2)+"\n")
     print(json.dumps(summary,ensure_ascii=False))
+    print("EXACT REVIEW CANDIDATES")
+    for item in batch_doc["selected"]:
+        print(json.dumps({
+            "id": item["id"],
+            "match": item["match"],
+            "sources": item.get("sources",[]),
+            "root_domain": item.get("root_domain"),
+            "root_concentration": item.get("root_concentration"),
+            "risk": item.get("risk",{})
+        }, ensure_ascii=False, sort_keys=True))
     return 0
 if __name__=="__main__": raise SystemExit(main())
