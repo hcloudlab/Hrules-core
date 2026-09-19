@@ -141,6 +141,32 @@ jobs:
         run: python tests/test_mihomo_real_config_builder.py
       - name: Build transformed Mihomo fixture
         run: python generators/build_mihomo_from_config.py tests/fixtures/mihomo-source-config.yaml --include-research --out build/proof/hrules-mihomo-real-fixture.yaml
+      - name: Assert Mihomo v0.1 user transformation contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          src=yaml.safe_load(Path('tests/fixtures/mihomo-source-config.yaml').read_text())
+          out=yaml.safe_load(Path('build/proof/hrules-mihomo-real-fixture.yaml').read_text())
+          assert out['proxies']==src['proxies']
+          assert out['dns']==src['dns']
+          assert out['external-ui']==src['external-ui']
+          assert out['keep-alive-interval']==src['keep-alive-interval']
+          assert out['mode']=='rule'
+          assert out['proxy-groups'] != src['proxy-groups']
+          assert out['rules'] != src['rules']
+          assert out['rules'][-1]=='MATCH,🚀 默认代理 [自选]'
+          assert any(x=='DOMAIN,app.adjust.com,REJECT' for x in out['rules'])
+          assert any(x=='DOMAIN,c.webengage.com,REJECT' for x in out['rules'])
+          print('PASS Mihomo v0.1 transformation contract')
+          PY
+      - name: Upload Mihomo v0.1 transformed acceptance artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mihomo-v0.1-transformed-acceptance
+          path: build/proof/hrules-mihomo-real-fixture.yaml
+          if-no-files-found: error
+          retention-days: 14
       - name: Download latest Mihomo linux amd64
         shell: bash
         run: |
