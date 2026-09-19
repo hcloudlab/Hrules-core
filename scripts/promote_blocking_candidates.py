@@ -14,6 +14,7 @@ def main()->int:
     p=argparse.ArgumentParser()
     p.add_argument("--gated",required=True); p.add_argument("--out",required=True)
     p.add_argument("--module-template",default="rules/blocking/blocking.yaml")
+    p.add_argument("--routing-match-validated",action="store_true")
     a=p.parse_args()
     gated=json.loads(Path(a.gated).read_text())
     template=yaml.safe_load(Path(a.module_template).read_text()) or {}
@@ -29,9 +30,19 @@ def main()->int:
           "purpose": classification["purpose"] if classification else "unknown",
           "provenance": {"kind":"upstream","source":",".join(sorted(set(sources))),"reference":item["id"],"observed_at":review["reviewed_at"]},
           "evidence": {"level":level,"methods":["upstream_ruleset","manual_review"]},
-          "validation": {"state":"partial","last_tested":review["reviewed_at"],"tests":["false_positive_review"]},
+          "validation": {
+              "state":"passed" if a.routing_match_validated else "partial",
+              "last_tested":review["reviewed_at"],
+              "tests":["false_positive_review","routing_match"] if a.routing_match_validated else ["false_positive_review"]
+          },
           "conflicts": [],
-          "notes": "Promotion proposal only; routing_match, verified evidence and release-policy checks are still required before publication." if classification else "Promotion proposal only; ownership/purpose classification, routing_match and release-policy evidence are still required before publication."
+          "notes": (
+              "Promotion proposal only; routing_match is validated, but verified evidence and release-policy checks are still required before publication."
+              if classification and a.routing_match_validated else
+              "Promotion proposal only; routing_match, verified evidence and release-policy checks are still required before publication."
+              if classification else
+              "Promotion proposal only; ownership/purpose classification, routing_match and release-policy evidence are still required before publication."
+          )
         })
     proposal={
       "schema_version":1,
