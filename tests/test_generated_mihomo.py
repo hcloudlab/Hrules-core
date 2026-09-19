@@ -35,6 +35,8 @@ def main():
     check("YouTube routed to YouTube group", "DOMAIN-SUFFIX,youtube.com,📺 YouTube [自选]" in rules)
     check("Telegram routed to Telegram group", "DOMAIN-SUFFIX,telegram.org,💬 Telegram [自选]" in rules)
     check("Telegram short links routed to Telegram group", "DOMAIN-SUFFIX,t.me,💬 Telegram [自选]" in rules)
+    check("Adjust analytics exact hostname rejected", "DOMAIN,app.adjust.com,REJECT" in rules)
+    check("WebEngage analytics exact hostname rejected", "DOMAIN,c.webengage.com,REJECT" in rules)
 
     crypto = "💰 虚拟货币 [自选]"
     check("Coinbase routed to crypto group", f"DOMAIN-SUFFIX,coinbase.com,{crypto}" in rules)
@@ -63,6 +65,10 @@ def main():
     check("RFC1918 192.168/16 routed DIRECT", "IP-CIDR,192.168.0.0/16,DIRECT" in rules)
     check("IPv6 ULA routed DIRECT", "IP-CIDR6,fc00::/7,DIRECT" in rules)
     check("CN suffix routed DIRECT", "DOMAIN-SUFFIX,cn,DIRECT" in rules)
+    check(
+        "Blocking precedes sensitive services",
+        rules.index("DOMAIN,app.adjust.com,REJECT") < rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [自选]"),
+    )
     check(
         "private rules precede sensitive services",
         rules.index("IP-CIDR,10.0.0.0/8,DIRECT") < rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [自选]"),
