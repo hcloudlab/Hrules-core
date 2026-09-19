@@ -106,6 +106,8 @@ jobs:
           assert artifacts, 'release staging unexpectedly empty'
           emitted_modules = {item['module'] for item in artifacts}
           assert not (emitted_modules & skipped), (emitted_modules & skipped)
+          assert 'blocking' in skipped, 'research Blocking module must remain withheld from RC public output'
+          assert 'blocking' not in emitted_modules
           for item in artifacts:
               path = Path('build/public-release') / item['path']
               assert path.is_file(), path

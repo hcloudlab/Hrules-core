@@ -100,6 +100,9 @@ def main():
     released = module(evidence="verified", state="passed")
     rule = released["rules"][0]
     check("verified passed record is publishable", compiler.publishable(released, rule))
+    rc_blocked = module(evidence="verified", state="passed")
+    rc_blocked["release_policy"]["allow_rc"] = False
+    check("module can explicitly block RC publication", not compiler.publishable(rc_blocked, rc_blocked["rules"][0], "rc"))
     check("mihomo provider matcher is policy-free", compiler.mihomo_matcher(rule) == "DOMAIN-SUFFIX,example.com")
     check("mihomo policy lowering", compiler.compile_module(released, "mihomo", False, policy).startswith("DOMAIN-SUFFIX,example.com,Example Group"))
     check("shadowrocket policy lowering", compiler.compile_module(released, "shadowrocket", False, policy).startswith("DOMAIN-SUFFIX,example.com,Example Group"))

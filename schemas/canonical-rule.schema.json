@@ -141,6 +141,7 @@
       "additionalProperties": false,
       "properties": {
         "minimum_evidence": {"enum": ["candidate", "corroborated", "verified"]},
+        "allow_rc": {"type": "boolean"},
         "allowed_ownership": {
           "type": "array",
           "uniqueItems": true,
