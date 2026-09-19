@@ -55,6 +55,18 @@ jobs:
         run: python tests/test_blocking_review_packet.py
       - name: Run real Blocking upstream dry-run
         run: python scripts/run_blocking_dry_run.py
+      - name: Gate first reviewed Blocking batch
+        run: |
+          python scripts/gate_blocking_reviews.py             --candidates build/blocking-dry-run/candidates.json             --reviews reviews/blocking/v0.1             --out build/blocking-dry-run/review-gated.json
+          python scripts/gate_blocking_classification.py             --gated build/blocking-dry-run/review-gated.json             --classifications classifications/blocking/v0.1             --out build/blocking-dry-run/classification-gated.json
+          python scripts/promote_blocking_candidates.py             --gated build/blocking-dry-run/classification-gated.json             --out build/blocking-dry-run/first-canonical-proposal.yaml
+          python scripts/validate_canonical.py build/blocking-dry-run/first-canonical-proposal.yaml
+      - name: Validate first reviewed Blocking routing
+        run: python tests/test_blocking_first_reviewed_batch.py
+      - name: Mark reviewed proposal routing validation
+        run: |
+          python scripts/promote_blocking_candidates.py             --gated build/blocking-dry-run/classification-gated.json             --routing-match-validated             --out build/blocking-dry-run/first-canonical-proposal-validated.yaml
+          python scripts/validate_canonical.py build/blocking-dry-run/first-canonical-proposal-validated.yaml
       - name: Upload Blocking review evidence
         uses: actions/upload-artifact@v4
         with:
