@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "candidate_id": "blk-8600f83dcc5ad331",
+  "decision": "block",
+  "reviewer": "HCloudLab assisted evidence review",
+  "reviewed_at": "2026-09-18",
+  "expires": null,
+  "reason": "Tenjin's own documentation uses track.tenjin.io as the server for attribution tracking links, including advertising identifiers and campaign parameters. Exact-host blocking is limited to that documented tracking endpoint.",
+  "checks": {
+    "service_overlap_reviewed": true,
+    "root_domain_reviewed": true,
+    "false_positive_reviewed": true
+  },
+  "evidence": [
+    "https://tenjin.com/docs/callback-macros/",
+    "https://tenjin.com/privacy/"
+  ]
+}
