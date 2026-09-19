@@ -78,6 +78,43 @@ sources:
       - Candidate for cross-checking Chinese advertising/tracker coverage.
       - License and redistribution terms must be cleared before derived publication.
 
+
+  stevenblack_first_party_hosts:
+    repository: StevenBlack/hosts
+    role: blocking_candidate
+    license: MIT
+    candidate_categories: [blocking]
+    upstream:
+      ref: master
+      artifact: data/StevenBlack/hosts
+      raw_url: https://raw.githubusercontent.com/StevenBlack/hosts/master/data/StevenBlack/hosts
+    ingestion:
+      parser: strict_hosts_exact
+      anomaly_guard: required
+      redistribution_review: required
+    notes:
+      - Uses Steven Black's own ad-hoc hosts source rather than the aggregate hosts product, avoiding mixed upstream-license ambiguity.
+      - Hosts entries are exact hostname redirects; normalize to canonical domain matchers, never domain_suffix.
+      - MIT notice/attribution handling must be present before redistribution review can be cleared.
+
+  adaway_default_hosts:
+    repository: AdAway/adaway.github.io
+    role: blocking_candidate
+    license: CC-BY-3.0
+    candidate_categories: [blocking]
+    upstream:
+      ref: master
+      artifact: hosts.txt
+      raw_url: https://raw.githubusercontent.com/AdAway/adaway.github.io/master/hosts.txt
+    ingestion:
+      parser: strict_hosts_exact
+      anomaly_guard: required
+      redistribution_review: required
+    notes:
+      - The hosts.txt file header identifies CC Attribution 3.0 for the default blocklist.
+      - Hosts entries are exact hostname redirects; normalize to canonical domain matchers, never domain_suffix.
+      - Attribution requirements must be implemented and reviewed before redistribution.
+
 policy_modules:
   claude:
     target_group: "🔐 Claude / OpenAI [自选]"
