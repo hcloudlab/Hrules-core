@@ -11,7 +11,12 @@ def main() -> int:
     p.add_argument("--out-md",required=True)
     a=p.parse_args()
     doc=json.loads(Path(a.batch).read_text())
+    policy=doc.get("policy",{})
+    if doc.get("status")!="review_batch_only" or policy.get("tier")!="low" or not policy.get("require_exact_lowering"):
+        raise SystemExit("REFUSED: review packet requires bounded low-risk EXACT batch")
     selected=doc.get("selected",[])
+    if any(x.get("semantic_lowering")!="EXACT" or x.get("risk",{}).get("tier")!="low" for x in selected):
+        raise SystemExit("REFUSED: batch contains non-EXACT or non-low-risk candidate")
     packet=[]
     for item in selected:
         packet.append({
@@ -46,6 +51,7 @@ def main() -> int:
         lines.append("| %d | \`%s\` | \`%s:%s\` | %s | %s | %s | pending | pending | pending | pending |" % (
             i, x["candidate_id"], m["type"], m["value"], sources, tier, x.get("root_concentration","")
         ))
+    Path(a.out_md).parent.mkdir(parents=True,exist_ok=True)
     Path(a.out_md).write_text("\n".join(lines)+"\n")
     print("REVIEW PACKET candidates=%d" % len(packet))
     return 0
