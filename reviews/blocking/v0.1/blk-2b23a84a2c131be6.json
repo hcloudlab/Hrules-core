@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "candidate_id": "blk-2b23a84a2c131be6",
+  "decision": "block",
+  "reviewer": "HCloudLab assisted evidence review",
+  "reviewed_at": "2026-09-18",
+  "expires": null,
+  "reason": "Official Adjust documentation identifies app.adjust.com as an Adjust click/attribution endpoint used for campaign measurement. The candidate is an exact hostname from two independent native hosts sources, so blocking is scoped to the tracking endpoint rather than the wider adjust.com service.",
+  "checks": {
+    "service_overlap_reviewed": true,
+    "root_domain_reviewed": true,
+    "false_positive_reviewed": true
+  },
+  "evidence": [
+    "https://www.help.adjust.com/en/article/links",
+    "https://www.help.adjust.com/en/article/append-advertising-identifiers"
+  ]
+}
