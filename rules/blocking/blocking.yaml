@@ -50,3 +50,57 @@ rules:
       tests: [false_positive_review, routing_match]
     conflicts: []
     notes: Canonical research rule. WebEngage documentation identifies this exact hostname as a tracking/data-collection endpoint; public RC release is explicitly disabled for the Blocking module.
+  - id: blk-8600f83dcc5ad331
+    match: {type: domain, value: track.tenjin.io}
+    ownership: dedicated_third_party
+    purpose: analytics
+    provenance:
+      kind: upstream
+      source: adaway_default_hosts,stevenblack_first_party_hosts
+      reference: blk-8600f83dcc5ad331
+      observed_at: '2026-09-18'
+    evidence:
+      level: corroborated
+      methods: [upstream_ruleset, official_documentation, manual_review]
+    validation:
+      state: passed
+      last_tested: '2026-09-18'
+      tests: [false_positive_review, routing_match]
+    conflicts: []
+    notes: Canonical research rule. Tenjin documents this exact hostname for attribution tracking links; public RC release remains disabled.
+  - id: blk-f66b16bb0bb9b027
+    match: {type: domain, value: cdn-settings.segment.com}
+    ownership: dedicated_third_party
+    purpose: analytics
+    provenance:
+      kind: upstream
+      source: adaway_default_hosts,stevenblack_first_party_hosts
+      reference: blk-f66b16bb0bb9b027
+      observed_at: '2026-09-18'
+    evidence:
+      level: corroborated
+      methods: [upstream_ruleset, official_documentation, manual_review]
+    validation:
+      state: passed
+      last_tested: '2026-09-18'
+      tests: [false_positive_review, routing_match]
+    conflicts: []
+    notes: Canonical research rule. Segment SDK documentation identifies this exact hostname as its settings CDN; public RC release remains disabled.
+  - id: blk-b57102d664a768a8
+    match: {type: domain, value: nexus.ensighten.com}
+    ownership: dedicated_third_party
+    purpose: analytics
+    provenance:
+      kind: upstream
+      source: adaway_default_hosts,stevenblack_first_party_hosts
+      reference: blk-b57102d664a768a8
+      observed_at: '2026-09-18'
+    evidence:
+      level: corroborated
+      methods: [upstream_ruleset, official_documentation, manual_review]
+    validation:
+      state: passed
+      last_tested: '2026-09-18'
+      tests: [false_positive_review, routing_match]
+    conflicts: []
+    notes: Canonical research rule. Ensighten documents this exact hostname for its beacon/tag-management SDK; public RC release remains disabled.
