@@ -28,7 +28,7 @@ def main()->int:
     subprocess.run([sys.executable,str(ROOT/"scripts/analyze_blocking_risk.py"),"--candidates",str(candidates),"--out",str(risk)],check=True,cwd=ROOT)
     risk_doc=json.loads(risk.read_text())
     batch=out/"first-review-batch.json"
-    subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_batch.py"),"--candidates",str(candidates),"--risk",str(risk),"--out",str(batch),"--tier","low","--limit","100","--max-root-concentration","10","--require-exact-lowering"],check=True,cwd=ROOT)
+    subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_batch.py"),"--candidates",str(candidates),"--risk",str(risk),"--out",str(batch),"--tier","low","--limit","100","--max-root-concentration","10","--require-multi-source","--require-exact-lowering"],check=True,cwd=ROOT)
     batch_doc=json.loads(batch.read_text())
     packet_json=out/"exact-review-packet.json"; packet_md=out/"exact-review-packet.md"
     subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_packet.py"),"--batch",str(batch),"--out-json",str(packet_json),"--out-md",str(packet_md)],check=True,cwd=ROOT)
