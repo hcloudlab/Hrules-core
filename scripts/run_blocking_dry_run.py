@@ -10,14 +10,16 @@ def main()->int:
     p=argparse.ArgumentParser(); p.add_argument("--source",action="append",default=[])
     p.add_argument("--out-dir",default="build/blocking-dry-run"); p.add_argument("--max-reject-ratio",type=float,default=.98)
     a=p.parse_args(); registry=yaml.safe_load((ROOT/"sources/registry.yaml").read_text())["sources"]
-    ids=a.source or ["easylist_china","adrules_adblock_list"]; out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True)
+    ids=a.source or ["easylist_china","adrules_adblock_list","stevenblack_first_party_hosts","adaway_default_hosts"]; out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True)
     specs=[]
     for sid in ids:
         src=registry[sid]; url=src["upstream"]["raw_url"]; snap=out/f"{sid}.txt"; meta=out/f"{sid}.meta.json"
         cmd=[sys.executable,str(ROOT/"scripts/upstream_guard.py"),url,"--out",str(snap),"--meta",str(meta),"--min-bytes","1024","--min-entries","10"]
         prev=ROOT/"sources"/"snapshots"/f"{sid}.meta.json"
         if prev.exists(): cmd += ["--previous-meta",str(prev)]
-        subprocess.run(cmd,check=True,cwd=ROOT); specs += ["--source",f"{sid}={snap}"]
+        subprocess.run(cmd,check=True,cwd=ROOT)
+        parser_name=src.get("ingestion",{}).get("parser","strict_abp_domain")
+        specs += ["--source",f"{sid}={parser_name}={snap}"]
     candidates=out/"candidates.json"; report=out/"report.json"
     subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_candidates.py"),*specs,"--out",str(candidates),"--report",str(report),"--max-reject-ratio",str(a.max_reject_ratio)],check=True,cwd=ROOT)
     rep=json.loads(report.read_text()); doc=json.loads(candidates.read_text())
