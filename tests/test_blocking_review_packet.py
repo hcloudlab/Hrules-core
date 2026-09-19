@@ -7,7 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     with tempfile.TemporaryDirectory() as td:
         d=Path(td); batch=d/"batch.json"; outj=d/"packet.json"; outm=d/"packet.md"
-        batch.write_text(json.dumps({"selected":[{
+        batch.write_text(json.dumps({"status":"review_batch_only","policy":{"tier":"low","require_exact_lowering":True},"selected":[{
             "id":"blk-aaaaaaaaaaaaaaaa",
             "match":{"type":"domain","value":"ads.example.com"},
             "sources":["a","b"],"source_count":2,"semantic_lowering":"EXACT",
@@ -24,6 +24,11 @@ def main():
         assert item["semantic_lowering"]=="EXACT"
         assert item["review_state"]=="pending"
         assert "ads.example.com" in outm.read_text()
+        bad=d/"bad.json"
+        bad.write_text(json.dumps({"status":"review_batch_only","policy":{"tier":"low","require_exact_lowering":False},"selected":[]}))
+        proc=subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_packet.py"),
+                             "--batch",str(bad),"--out-json",str(d/"bad-out.json"),"--out-md",str(d/"nested"/"bad.md")],cwd=ROOT)
+        assert proc.returncode != 0
     print("All Blocking review packet tests passed")
 
 if __name__=="__main__":
