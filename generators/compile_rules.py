@@ -63,6 +63,8 @@ def publishable(module: dict, rule: dict, channel: str = "stable") -> bool:
     ownership_ok = not allowed or ownership in allowed
 
     if channel == "rc":
+        if policy.get("allow_rc", True) is False:
+            return False
         return (
             rank.get(evidence, -1) >= rank["corroborated"]
             and state in {"partial", "passed"}
