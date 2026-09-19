@@ -3,6 +3,8 @@ allow-lan: true
 mode: rule
 log-level: warning
 ipv6: false
+external-ui: ./ui
+keep-alive-interval: 30
 dns:
   enable: true
   enhanced-mode: fake-ip
