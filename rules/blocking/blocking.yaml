@@ -9,7 +9,44 @@ module:
   description: Canonical holding module for advertising/tracker domains that survive upstream anomaly checks, strict normalization, provenance review, deduplication and conflict review.
 release_policy:
   minimum_evidence: verified
+  allow_rc: false
   allowed_ownership: [dedicated_third_party]
   required_tests: [routing_match, false_positive_review]
   forbid_unresolved_policy_conflicts: true
-rules: []
+rules:
+  - id: blk-2b23a84a2c131be6
+    match: {type: domain, value: app.adjust.com}
+    ownership: dedicated_third_party
+    purpose: analytics
+    provenance:
+      kind: upstream
+      source: adaway_default_hosts,stevenblack_first_party_hosts
+      reference: blk-2b23a84a2c131be6
+      observed_at: '2026-09-18'
+    evidence:
+      level: corroborated
+      methods: [upstream_ruleset, official_documentation, manual_review]
+    validation:
+      state: passed
+      last_tested: '2026-09-18'
+      tests: [false_positive_review, routing_match]
+    conflicts: []
+    notes: Canonical research rule. Adjust documentation identifies this exact hostname as a click/attribution endpoint; public RC release is explicitly disabled for the Blocking module.
+  - id: blk-16ba81838eba73bf
+    match: {type: domain, value: c.webengage.com}
+    ownership: dedicated_third_party
+    purpose: analytics
+    provenance:
+      kind: upstream
+      source: adaway_default_hosts,stevenblack_first_party_hosts
+      reference: blk-16ba81838eba73bf
+      observed_at: '2026-09-18'
+    evidence:
+      level: corroborated
+      methods: [upstream_ruleset, official_documentation, manual_review]
+    validation:
+      state: passed
+      last_tested: '2026-09-18'
+      tests: [false_positive_review, routing_match]
+    conflicts: []
+    notes: Canonical research rule. WebEngage documentation identifies this exact hostname as a tracking/data-collection endpoint; public RC release is explicitly disabled for the Blocking module.
