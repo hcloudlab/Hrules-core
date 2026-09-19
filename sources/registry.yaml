@@ -92,6 +92,7 @@ sources:
       parser: strict_hosts_exact
       anomaly_guard: required
       redistribution_review: required
+      attribution_required: true
     notes:
       - Uses Steven Black's own ad-hoc hosts source rather than the aggregate hosts product, avoiding mixed upstream-license ambiguity.
       - Hosts entries are exact hostname redirects; normalize to canonical domain matchers, never domain_suffix.
@@ -110,6 +111,7 @@ sources:
       parser: strict_hosts_exact
       anomaly_guard: required
       redistribution_review: required
+      attribution_required: true
     notes:
       - The hosts.txt file header identifies CC Attribution 3.0 for the default blocklist.
       - Hosts entries are exact hostname redirects; normalize to canonical domain matchers, never domain_suffix.
