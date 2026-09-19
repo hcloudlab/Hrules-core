@@ -5,6 +5,6 @@
  "$defs":{"source":{"type":"object","additionalProperties":true,"required":["repository","role","license"],"properties":{
   "repository":{"type":"string","pattern":"^[^/]+/[^/]+$"},"role":{"type":"string","minLength":1},"license":{"type":"string","minLength":1},
   "upstream":{"type":"object","additionalProperties":false,"required":["ref","artifact","raw_url"],"properties":{"ref":{"type":"string","minLength":1},"artifact":{"type":"string","minLength":1},"raw_url":{"type":"string","format":"uri","pattern":"^https://"}}},
-  "ingestion":{"type":"object","additionalProperties":true,"properties":{"parser":{"type":"string","minLength":1},"anomaly_guard":{"enum":["required"]},"redistribution_review":{"enum":["required","cleared"]}}}
+  "ingestion":{"type":"object","additionalProperties":true,"properties":{"parser":{"type":"string","minLength":1},"anomaly_guard":{"enum":["required"]},"redistribution_review":{"enum":["required","cleared"]},"attribution_required":{"type":"boolean"},"attribution_notice":{"type":"string","minLength":1}}}
  }}}
 }
