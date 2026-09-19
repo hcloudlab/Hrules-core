@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "candidate_id": "blk-f66b16bb0bb9b027",
+  "decision": "block",
+  "reviewer": "HCloudLab assisted evidence review",
+  "reviewed_at": "2026-09-18",
+  "expires": null,
+  "reason": "Segment's official SDK repository documents cdn-settings.segment.com as the default CDN host used by Analytics clients to fetch integration/settings data. This is a dedicated third-party analytics SDK endpoint and the rule remains exact-host scoped.",
+  "checks": {
+    "service_overlap_reviewed": true,
+    "root_domain_reviewed": true,
+    "false_positive_reviewed": true
+  },
+  "evidence": [
+    "https://github.com/segmentio/Analytics-CSharp",
+    "https://github.com/segmentio/analytics-android/blob/master/CHANGELOG.md"
+  ]
+}

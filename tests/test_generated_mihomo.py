@@ -37,6 +37,9 @@ def main():
     check("Telegram short links routed to Telegram group", "DOMAIN-SUFFIX,t.me,💬 Telegram [自选]" in rules)
     check("Adjust analytics exact hostname rejected", "DOMAIN,app.adjust.com,REJECT" in rules)
     check("WebEngage analytics exact hostname rejected", "DOMAIN,c.webengage.com,REJECT" in rules)
+    check("Tenjin attribution exact hostname rejected", "DOMAIN,track.tenjin.io,REJECT" in rules)
+    check("Segment settings exact hostname rejected", "DOMAIN,cdn-settings.segment.com,REJECT" in rules)
+    check("Ensighten tag endpoint exact hostname rejected", "DOMAIN,nexus.ensighten.com,REJECT" in rules)
 
     crypto = "💰 虚拟货币 [自选]"
     check("Coinbase routed to crypto group", f"DOMAIN-SUFFIX,coinbase.com,{crypto}" in rules)

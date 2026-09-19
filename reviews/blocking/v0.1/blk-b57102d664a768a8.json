@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "candidate_id": "blk-b57102d664a768a8",
+  "decision": "block",
+  "reviewer": "HCloudLab assisted evidence review",
+  "reviewed_at": "2026-09-18",
+  "expires": null,
+  "reason": "Ensighten's official help documentation instructs customers using its beacon/pixel-based server-side tagging solution to allow script requests to nexus.ensighten.com. The rule targets only that documented tag-management endpoint.",
+  "checks": {
+    "service_overlap_reviewed": true,
+    "root_domain_reviewed": true,
+    "false_positive_reviewed": true
+  },
+  "evidence": [
+    "https://help.ensighten.com/hc/en-us/articles/36258326811665-Implementation-with-Google-Tag-Manager"
+  ]
+}
