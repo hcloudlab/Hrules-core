@@ -51,8 +51,17 @@ jobs:
         run: python tests/test_blocking_risk.py
       - name: Run bounded Blocking review batch tests
         run: python tests/test_blocking_review_batch.py
+      - name: Run Blocking review packet tests
+        run: python tests/test_blocking_review_packet.py
       - name: Run real Blocking upstream dry-run
         run: python scripts/run_blocking_dry_run.py
+      - name: Upload Blocking review evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: blocking-v0.1-review-evidence
+          path: build/blocking-dry-run
+          if-no-files-found: error
+          retention-days: 14
       - name: Assert dry-run remains non-canonical
         run: |
           python - <<'PY'
