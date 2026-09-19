@@ -44,6 +44,40 @@ sources:
       - Useful for historical and service-specific comparison.
       - Share-alike implications require explicit review before derived publication.
 
+  easylist_china:
+    repository: easylist/easylistchina
+    role: blocking_candidate
+    license: review_required
+    candidate_categories: [blocking]
+    upstream:
+      ref: master
+      artifact: easylistchina.txt
+      raw_url: https://raw.githubusercontent.com/easylist/easylistchina/master/easylistchina.txt
+    ingestion:
+      parser: strict_abp_domain
+      anomaly_guard: required
+      redistribution_review: required
+    notes:
+      - Treat as an upstream candidate, never as direct public output.
+      - Cosmetic, exception, regex, wildcard and optioned ABP rules are unsupported by the v0.1 domain normalizer and must fail closed.
+
+  adrules_adblock_list:
+    repository: Cats-Team/AdRules
+    role: blocking_candidate
+    license: review_required
+    candidate_categories: [blocking]
+    upstream:
+      ref: main
+      artifact: dns.txt
+      raw_url: https://raw.githubusercontent.com/Cats-Team/AdRules/main/dns.txt
+    ingestion:
+      parser: strict_abp_domain
+      anomaly_guard: required
+      redistribution_review: required
+    notes:
+      - Candidate for cross-checking Chinese advertising/tracker coverage.
+      - License and redistribution terms must be cleared before derived publication.
+
 policy_modules:
   claude:
     target_group: "🔐 Claude / OpenAI [自选]"

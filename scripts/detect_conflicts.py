@@ -7,11 +7,21 @@ It reports policy conflicts when overlapping modules have different policy class
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
+
+import importlib.util
+
+ROOT = Path(__file__).resolve().parents[1]
+COMPILER_PATH = ROOT / "generators" / "compile_rules.py"
+spec = importlib.util.spec_from_file_location("compile_rules_for_conflicts", COMPILER_PATH)
+compiler = importlib.util.module_from_spec(spec)
+assert spec and spec.loader
+spec.loader.exec_module(compiler)
 
 
 @dataclass(frozen=True)
@@ -34,11 +44,13 @@ def load_entries(root: Path) -> list[Entry]:
         module = doc.get("module", {})
         module_id = module.get("id", "<unknown>")
         policy = module.get("policy_class", "<unknown>")
+        exclusions = doc.get("exclusions", [])
         for rule in doc.get("rules", []):
+            if compiler.exclusion_action(rule, exclusions) == "skip":
+                continue
             match = rule.get("match", {})
             entries.append(Entry(module_id, policy, rule.get("id", "<unknown>"), match.get("type", ""), str(match.get("value", "")), path))
     return entries
-
 
 def domain_overlap(a: Entry, b: Entry) -> bool:
     domain_types = {"domain", "domain_suffix"}
@@ -54,10 +66,21 @@ def domain_overlap(a: Entry, b: Entry) -> bool:
     return False
 
 
+def ip_overlap(a: Entry, b: Entry) -> bool:
+    if a.match_type not in {"ip_cidr", "ip_cidr6"} or b.match_type not in {"ip_cidr", "ip_cidr6"}:
+        return False
+    try:
+        an = ipaddress.ip_network(a.value, strict=False)
+        bn = ipaddress.ip_network(b.value, strict=False)
+    except ValueError:
+        return False
+    return an.version == bn.version and an.overlaps(bn)
+
+
 def relation(a: Entry, b: Entry) -> str | None:
     if a.match_type == b.match_type and a.value == b.value:
         return "duplicate"
-    if domain_overlap(a, b):
+    if domain_overlap(a, b) or ip_overlap(a, b):
         return "overlap"
     return None
 

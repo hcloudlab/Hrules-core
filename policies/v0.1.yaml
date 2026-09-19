@@ -2,11 +2,30 @@ schema_version: 1
 policy_version: v0.1
 status: design_baseline
 
+# Routing order is semantic and MUST NOT depend on filesystem/path order.
+routing_stages:
+  private: 10
+  blocking: 20
+  sensitive_service: 30
+  ordinary_service: 40
+  cn_domain: 50
+  cn_ip: 60
+  fallback: 90
+
 # Canonical modules identify traffic. This file maps those modules to logical
 # routing policies. Client templates decide how each logical policy is rendered.
 
 logical_policies:
+  blocking_reject:
+    routing_stage: blocking
+    display_name: REJECT
+    behavior: reject
+    user_visible: false
+    notes:
+      - Blocking is opt-in at profile/template level until false-positive acceptance is complete.
+
   sensitive_ai:
+    routing_stage: sensitive_service
     display_name: "🔐 Claude / OpenAI [自选]"
     behavior: sensitive_account
     user_visible: true
@@ -21,6 +40,7 @@ logical_policies:
       - Avoid uncontrolled egress changes; do not claim this policy prevents account risk.
 
   general_ai:
+    routing_stage: ordinary_service
     display_name: "🤖 AI 服务 [自选]"
     behavior: region_preferred
     user_visible: true
@@ -32,6 +52,7 @@ logical_policies:
       allow_region_internal_auto_selection: true
 
   youtube_media:
+    routing_stage: ordinary_service
     display_name: "📺 YouTube [自选]"
     behavior: ordinary_proxy
     user_visible: true
@@ -43,6 +64,7 @@ logical_policies:
       allow_region_internal_auto_selection: true
 
   telegram_communication:
+    routing_stage: ordinary_service
     display_name: "💬 Telegram [自选]"
     behavior: ordinary_proxy
     user_visible: true
@@ -54,6 +76,7 @@ logical_policies:
       allow_region_internal_auto_selection: true
 
   crypto_account:
+    routing_stage: sensitive_service
     display_name: "💰 虚拟货币 [自选]"
     behavior: sensitive_account
     user_visible: true
@@ -65,6 +88,7 @@ logical_policies:
       allow_region_internal_auto_selection: true
 
   us_banking_account:
+    routing_stage: sensitive_service
     display_name: "🏦 美国银行 [自选]"
     behavior: sensitive_account
     user_visible: true
@@ -76,6 +100,7 @@ logical_policies:
       allow_region_internal_auto_selection: true
 
   brokerage_account:
+    routing_stage: sensitive_service
     display_name: "📈 美股 [自选]"
     behavior: sensitive_account
     user_visible: true
@@ -87,6 +112,7 @@ logical_policies:
       allow_region_internal_auto_selection: true
 
   stock_market_data:
+    routing_stage: ordinary_service
     display_name: "📈 美股 [自选]"
     behavior: informational
     user_visible: false
@@ -96,11 +122,13 @@ logical_policies:
       - v0.1 may reuse the same visible user choice without pretending both traffic classes have the same semantics.
 
   private_direct:
+    routing_stage: private
     display_name: DIRECT
     behavior: direct_preferred
     user_visible: false
 
   cn_direct:
+    routing_stage: cn_domain
     display_name: DIRECT
     behavior: direct_preferred
     user_visible: false
@@ -109,6 +137,7 @@ logical_policies:
       - Broader CN domains/IPs require a reviewed upstream adapter before release.
 
 module_bindings:
+  blocking: blocking_reject
   claude: sensitive_ai
   openai: sensitive_ai
   gemini: general_ai

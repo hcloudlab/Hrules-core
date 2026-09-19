@@ -1,0 +1,15 @@
+schema_version: 1
+module:
+  id: blocking
+  name: Blocking Candidates
+  category: blocking
+  policy_class: reject
+  status: research
+  owners: [HCloudLab]
+  description: Canonical holding module for advertising/tracker domains that survive upstream anomaly checks, strict normalization, provenance review, deduplication and conflict review.
+release_policy:
+  minimum_evidence: verified
+  allowed_ownership: [dedicated_third_party]
+  required_tests: [routing_match, false_positive_review]
+  forbid_unresolved_policy_conflicts: true
+rules: []

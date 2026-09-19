@@ -31,7 +31,7 @@ def load(path: Path):
 def build_inline_rules(rules_root: Path, policy_path: Path, include_research: bool) -> list[str]:
     policy = load(policy_path)
     lines: list[str] = []
-    for module in compiler.load_modules(rules_root):
+    for module in compiler.order_modules(compiler.load_modules(rules_root), policy):
         module_id = module["module"]["id"]
         if module_id in {"youtube", "cn"}:
             continue

@@ -10,10 +10,18 @@ Research/candidate/untested records remain excluded from both gates.
 from __future__ import annotations
 import argparse
 import json
+import ipaddress
 from pathlib import Path
 import yaml
 
 TARGETS = ("mihomo", "shadowrocket", "sing-box")
+TARGET_STATUS = {"mihomo": "validating", "shadowrocket": "experimental", "sing-box": "experimental"}
+LOWERING = {
+    "mihomo": {"domain":"EXACT","domain_suffix":"EXACT","domain_keyword":"EXACT","ip_cidr":"EXACT","ip_cidr6":"EXACT","process_name":"EXACT","process_path":"EXACT"},
+    "shadowrocket": {"domain":"EXACT","domain_suffix":"EXACT","domain_keyword":"EXACT","ip_cidr":"EXACT","ip_cidr6":"EXACT","process_name":"EXACT","process_path":"UNSUPPORTED"},
+    "sing-box": {"domain":"EXACT","domain_suffix":"EXACT","domain_keyword":"EXACT","ip_cidr":"EXACT","ip_cidr6":"EXACT","process_name":"EXACT","process_path":"EXACT"},
+}
+
 
 
 def load_yaml(path: Path):
@@ -94,6 +102,82 @@ def resolve_policy(module_id: str, policy_doc: dict) -> tuple[str, dict]:
     return policy_id, item
 
 
+def routing_stage(module: dict, policy_doc: dict) -> tuple[int, str]:
+    module_id = module["module"]["id"]
+    bindings = policy_doc["module_bindings"]
+    logical = policy_doc["logical_policies"]
+    if module_id not in bindings or bindings[module_id] not in logical:
+        raise ValueError(f"module has no policy binding: {module_id}")
+    policy = logical[bindings[module_id]]
+    stage = policy.get("routing_stage")
+    stages = policy_doc.get("routing_stages", {})
+    if not stage or stage not in stages:
+        raise ValueError(f"module has no valid routing stage: {module_id}")
+    return int(stages[stage]), module_id
+
+
+def order_modules(modules: list[dict], policy_doc: dict) -> list[dict]:
+    """Deterministic semantic order; filesystem names never decide routing precedence."""
+    return sorted(modules, key=lambda m: routing_stage(m, policy_doc))
+
+
+def lowering_status(target: str, match_type: str) -> str:
+    status = LOWERING.get(target, {}).get(match_type, "UNSUPPORTED")
+    if status not in {"EXACT", "SAFE_DEGRADE", "UNSUPPORTED"}:
+        raise ValueError(f"invalid lowering status: {target}/{match_type}={status}")
+    return status
+
+
+def _domain_contains(container: dict, item: dict) -> bool:
+    if container.get("type") not in {"domain", "domain_suffix"} or item.get("type") not in {"domain", "domain_suffix"}:
+        return False
+    cv, iv = str(container.get("value", "")).lower(), str(item.get("value", "")).lower()
+    if container["type"] == "domain":
+        return item["type"] == "domain" and cv == iv
+    return iv == cv or iv.endswith("." + cv)
+
+
+def _ip_contains(container: dict, item: dict) -> bool:
+    if container.get("type") not in {"ip_cidr", "ip_cidr6"} or item.get("type") not in {"ip_cidr", "ip_cidr6"}:
+        return False
+    try:
+        a = ipaddress.ip_network(str(container["value"]), strict=False)
+        b = ipaddress.ip_network(str(item["value"]), strict=False)
+        return a.version == b.version and b.subnet_of(a)
+    except ValueError:
+        return False
+
+
+def _keyword_contains(container: dict, item: dict) -> bool:
+    if container.get("type") != "domain_keyword" or item.get("type") not in {"domain", "domain_suffix", "domain_keyword"}:
+        return False
+    cv, iv = str(container.get("value", "")).lower(), str(item.get("value", "")).lower()
+    return bool(cv) and cv in iv
+
+
+def exclusion_action(rule: dict, exclusions: list[dict]) -> str:
+    """Safely apply exclusions; suppression wins regardless of YAML order."""
+    match = rule["match"]
+    suppressing = []
+    subtractive = []
+    for item in exclusions:
+        ex = item["match"]
+        if ex == match or _domain_contains(ex, match) or _ip_contains(ex, match):
+            suppressing.append(ex)
+            continue
+        if _domain_contains(match, ex) or _ip_contains(match, ex) or _keyword_contains(match, ex):
+            subtractive.append(ex)
+    if suppressing:
+        return "skip"
+    if subtractive:
+        ex = subtractive[0]
+        raise ValueError(
+            f"exclusion {ex['type']}:{ex['value']} is narrower than "
+            f"rule {match['type']}:{match['value']}; subtractive lowering unsupported"
+        )
+    return "keep"
+
+
 def target_name(module_id: str, policy_doc: dict) -> str:
     _, resolved = resolve_policy(module_id, policy_doc)
     return resolved["display_name"]
@@ -141,6 +225,11 @@ def compile_module(module: dict, target: str, include_research: bool, policy_doc
     module_id = module["module"]["id"]
     destination = target_name(module_id, policy_doc)
     selected = [r for r in module["rules"] if include_research or publishable(module, r, channel)]
+    selected = [r for r in selected if exclusion_action(r, module.get("exclusions", [])) == "keep"]
+    for rule in selected:
+        status = lowering_status(target, rule["match"]["type"])
+        if status == "UNSUPPORTED":
+            raise ValueError(f"unsupported {target} matcher: {rule['match']['type']}")
     if target == "mihomo":
         return "\n".join(mihomo_line(r, destination) for r in selected) + ("\n" if selected else "")
     if target == "shadowrocket":
@@ -158,10 +247,14 @@ def main() -> int:
     parser.add_argument("--include-research", action="store_true")
     parser.add_argument("--channel", choices=["rc", "stable"], default="stable")
     parser.add_argument("--target", choices=["all", *TARGETS], default="all")
+    parser.add_argument("--allow-experimental", action="store_true", help="allow unvalidated client compilers")
     args = parser.parse_args()
     policy_doc = load_yaml(Path(args.policy))
     targets = TARGETS if args.target == "all" else (args.target,)
-    modules = load_modules(Path(args.rules))
+    experimental = [t for t in targets if TARGET_STATUS[t] == "experimental"]
+    if experimental and not args.allow_experimental:
+        raise SystemExit("experimental target(s) require --allow-experimental: " + ", ".join(experimental))
+    modules = order_modules(load_modules(Path(args.rules)), policy_doc)
     out_root = Path(args.out)
     count = 0
     for module in modules:

@@ -63,6 +63,18 @@ def main():
     check("RFC1918 192.168/16 routed DIRECT", "IP-CIDR,192.168.0.0/16,DIRECT" in rules)
     check("IPv6 ULA routed DIRECT", "IP-CIDR6,fc00::/7,DIRECT" in rules)
     check("CN suffix routed DIRECT", "DOMAIN-SUFFIX,cn,DIRECT" in rules)
+    check(
+        "private rules precede sensitive services",
+        rules.index("IP-CIDR,10.0.0.0/8,DIRECT") < rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [自选]"),
+    )
+    check(
+        "sensitive services precede CN fallback domain",
+        rules.index("DOMAIN-SUFFIX,claude.ai,🔐 Claude / OpenAI [自选]") < rules.index("DOMAIN-SUFFIX,cn,DIRECT"),
+    )
+    check(
+        "ordinary services precede CN fallback domain",
+        rules.index("DOMAIN-SUFFIX,youtube.com,📺 YouTube [自选]") < rules.index("DOMAIN-SUFFIX,cn,DIRECT"),
+    )
     check("MATCH is final rule", rules[-1] == "MATCH,🚀 默认代理 [自选]")
 
     sensitive = groups["🔐 Claude / OpenAI [自选]"]["proxies"]

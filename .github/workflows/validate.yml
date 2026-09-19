@@ -27,6 +27,40 @@ jobs:
         run: python scripts/detect_conflicts.py rules
       - name: Run semantic proof tests
         run: python tests/test_canonical_validator.py
+      - name: Run conflict regression tests
+        run: python tests/test_conflicts.py
+      - name: Run upstream anomaly guard tests
+        run: python tests/test_upstream_guard.py
+      - name: Run strict ABP normalizer tests
+        run: python tests/test_abp_normalizer.py
+      - name: Validate source registry
+        run: python scripts/validate_sources.py
+      - name: Validate Blocking allowlist
+        run: python scripts/validate_blocking_allowlist.py
+      - name: Run Blocking ingestion pipeline tests
+        run: python tests/test_blocking_ingestion.py
+      - name: Run Blocking review gate tests
+        run: python tests/test_blocking_review_gate.py
+      - name: Run Blocking promotion contract tests
+        run: python tests/test_blocking_promotion.py
+      - name: Run Blocking classification gate tests
+        run: python tests/test_blocking_classification_gate.py
+      - name: Run Blocking risk triage tests
+        run: python tests/test_blocking_risk.py
+      - name: Run bounded Blocking review batch tests
+        run: python tests/test_blocking_review_batch.py
+      - name: Run real Blocking upstream dry-run
+        run: python scripts/run_blocking_dry_run.py
+      - name: Assert dry-run remains non-canonical
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          doc=json.loads(Path('build/blocking-dry-run/candidates.json').read_text())
+          assert doc['status']=='review_only'
+          assert Path('build/blocking-dry-run/summary.json').is_file()
+          print(Path('build/blocking-dry-run/summary.json').read_text())
+          PY
       - name: Run compiler contract tests
         run: python tests/test_compiler.py
       - name: Run profile contract tests

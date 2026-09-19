@@ -77,7 +77,7 @@ def build_groups(template: dict, node_names: list[str]) -> list[dict]:
 def build_rules(rules_root: Path, policy_path: Path, include_research: bool) -> list[str]:
     policy = load(policy_path)
     lines: list[str] = []
-    for module in compiler.load_modules(rules_root):
+    for module in compiler.order_modules(compiler.load_modules(rules_root), policy):
         text = compiler.compile_module(module, "mihomo", include_research, policy)
         lines.extend(line for line in text.splitlines() if line.strip())
     lines.append("MATCH,🚀 默认代理 [自选]")
