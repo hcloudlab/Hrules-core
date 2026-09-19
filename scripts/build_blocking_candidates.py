@@ -7,7 +7,10 @@ from pathlib import Path
 import yaml
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from scripts.normalize_abp import normalize
+from scripts.normalize_abp import normalize as normalize_abp
+from scripts.normalize_hosts import normalize as normalize_hosts
+
+PARSERS = {"strict_abp_domain": normalize_abp, "strict_hosts_exact": normalize_hosts}
 
 def sha(path: Path)->str: return hashlib.sha256(path.read_bytes()).hexdigest()
 def candidate_id(match_type: str, value: str)->str:
@@ -44,8 +47,17 @@ def main()->int:
     p.add_argument("--max-reject-ratio",type=float,default=.05); p.add_argument("--min-sources",type=int,default=1)
     a=p.parse_args(); provenance=defaultdict(list); semantics=defaultdict(set); rejected=[]; source_meta=[]
     for spec in a.source:
-        sid,raw=spec.split("=",1); path=Path(raw)
-        accepted,rej=normalize(path.read_text(encoding="utf-8",errors="replace").splitlines())
+        parts=spec.split("=",2)
+        if len(parts)==2:
+            sid,raw=parts; parser_name="strict_abp_domain"
+        elif len(parts)==3:
+            sid,parser_name,raw=parts
+        else:
+            raise SystemExit(f"REFUSED malformed source spec: {spec}")
+        if parser_name not in PARSERS:
+            raise SystemExit(f"REFUSED {sid}: unknown parser {parser_name}")
+        path=Path(raw)
+        accepted,rej=PARSERS[parser_name](path.read_text(encoding="utf-8",errors="replace").splitlines())
         classified=len(accepted)+len(rej); ratio=len(rej)/classified if classified else 1
         if not accepted or ratio>a.max_reject_ratio: raise SystemExit(f"REFUSED {sid}: accepted={len(accepted)} rejected={len(rej)} ratio={ratio:.3f}")
         for m in accepted:
@@ -53,7 +65,7 @@ def main()->int:
             provenance[key].append(sid)
             semantics[key].add(m.get("semantic_lowering","EXACT"))
         rejected.extend({"source":sid,**x} for x in rej)
-        source_meta.append({"id":sid,"path":str(path),"sha256":sha(path),"accepted":len(accepted),"rejected":len(rej),"reject_ratio":ratio})
+        source_meta.append({"id":sid,"parser":parser_name,"path":str(path),"sha256":sha(path),"accepted":len(accepted),"rejected":len(rej),"reject_ratio":ratio})
     existing=existing_matchers(Path(a.rules)); allowlist=load_allowlist(Path(a.allowlist)); candidates=[]; conflicts=[]; allowlisted=[]
     for key,sources in sorted(provenance.items()):
         rec={"id":candidate_id(key[0],key[1]),"match":{"type":key[0],"value":key[1]},"sources":sorted(set(sources)),"source_count":len(set(sources)),"semantic_lowering":"SAFE_DEGRADE" if "SAFE_DEGRADE" in semantics[key] else "EXACT"}
