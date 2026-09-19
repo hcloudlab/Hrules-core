@@ -2,6 +2,7 @@
 """Run guarded real-upstream Blocking ingestion without canonical promotion."""
 from __future__ import annotations
 import argparse, json, subprocess, sys
+from collections import Counter
 from pathlib import Path
 import yaml
 ROOT=Path(__file__).resolve().parents[1]
@@ -32,7 +33,8 @@ def main()->int:
     safe_batch=out/"corroborated-safe-degrade-batch.json"
     subprocess.run([sys.executable,str(ROOT/"scripts/build_blocking_review_batch.py"),"--candidates",str(candidates),"--risk",str(risk),"--out",str(safe_batch),"--tier","low","--limit","100","--max-root-concentration","10","--require-multi-source"],check=True,cwd=ROOT)
     safe_doc=json.loads(safe_batch.read_text())
-    summary={"sources":rep["sources"],"candidate_count":len(doc["candidates"]),"conflict_count":len(rep["conflicts"]),"allowlisted_count":rep["allowlisted_count"],"rejected_count":rep["rejected_count"],"risk_counts":risk_doc["risk_counts"],"top_root_concentrations":risk_doc["top_root_concentrations"][:20],"first_review_batch_count":len(batch_doc["selected"]),"corroborated_safe_degrade_batch_count":len(safe_doc["selected"])}
+    exact_sources=Counter(src for item in batch_doc["selected"] for src in item.get("sources",[]))
+    summary={"sources":rep["sources"],"candidate_count":len(doc["candidates"]),"conflict_count":len(rep["conflicts"]),"allowlisted_count":rep["allowlisted_count"],"rejected_count":rep["rejected_count"],"risk_counts":risk_doc["risk_counts"],"top_root_concentrations":risk_doc["top_root_concentrations"][:20],"first_review_batch_count":len(batch_doc["selected"]),"first_review_batch_source_counts":dict(sorted(exact_sources.items())),"corroborated_safe_degrade_batch_count":len(safe_doc["selected"])}
     (out/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2)+"\n")
     print(json.dumps(summary,ensure_ascii=False))
     return 0
